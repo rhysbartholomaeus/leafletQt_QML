@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+
+    <!-- Leaflet -->
+
+    <script src="qrc:///html/resources/leaflet/leaflet-src.js"></script>
+    <link rel="stylesheet" href="qrc:///html/resources/leaflet/leaflet.css" />
+
+    <!-- Leaflet Draw Plugin -->
+
+    <script src="qrc:///html/resources/leaflet.draw/Leaflet.draw.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/Leaflet.Draw.Event.js"></script>
+    <link rel="stylesheet" href="qrc:///html/resources/leaflet.draw/leaflet.draw.css" />
+    <script src="qrc:///html/resources/leaflet.draw/Toolbar.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/Tooltip.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/ext/GeometryUtil.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/ext/LatLngUtil.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/ext/LineUtil.Intersect.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/ext/Polygon.Intersect.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/ext/Polyline.Intersect.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/ext/TouchEvents.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/draw/DrawToolbar.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/draw/handler/Draw.Feature.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/draw/handler/Draw.SimpleShape.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/draw/handler/Draw.Polyline.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/draw/handler/Draw.Marker.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/draw/handler/Draw.CircleMarker.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/draw/handler/Draw.Circle.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/draw/handler/Draw.Polygon.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/draw/handler/Draw.Rectangle.js"></script> 
+    <script src="qrc:///html/resources/leaflet.draw/edit/EditToolbar.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/edit/handler/EditToolbar.Edit.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/edit/handler/EditToolbar.Delete.js"></script> 
+    <script src="qrc:///html/resources/leaflet.draw/Control.Draw.js"></script>  
+    <script src="qrc:///html/resources/leaflet.draw/edit/handler/Edit.Poly.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/edit/handler/Edit.SimpleShape.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/edit/handler/Edit.Marker.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/edit/handler/Edit.CircleMarker.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/edit/handler/Edit.Circle.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/edit/handler/Edit.Rectangle.js"></script>
+    <script src="qrc:///html/resources/leaflet.draw/InitialiseLeafletDraw.js"></script>
+
+    <!-- Leaflet RealTime Plugin -->
+
+    <script src="qrc:///html/resources/leaflet.realtime/L.Realtime.js"></script>
+    <script src="qrc:///html/resources/leaflet.realtime/QueryOpenSkyNetworks.js"></script>
+
+    <!-- Leaflet Track Plugin -->
+
+    <!-- <script src="./resources/geojson/convertToGEOJSON.js"></script> -->
+    <script src="qrc:///html/resources/leaflet.tracksymbol/tracksymbol.js"></script>
+    <!-- <link rel="stylesheet" href="./resources/css/flightradar.css" /> -->
+
+    <!-- Qt Webchannel - Requires HTML to be loaded by QWebEngineView-->
+
+    <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
+
+    <!-- Moving marker addon -->
+
+    <script type="text/javascript" src="qrc:///html/resources/Leaflet.MovingMarker/MovingMarker.js"></script>
+
+    <!-- Test a moving aircraft -->
+
+    <script type="text/javascript" src="qrc:///html/resources/leaflet.realtime/test_aircraft.js"></script>
+    </head>
+    <body>
+        
+        <div id="map" style="height:100%; width:100%;position:absolute; border: 1px solid rgb(2, 89, 146)"></div>
+
+        <script>
+
+            var map = new L.Map('map', {center: new L.LatLng(-35.022638, 138.904095), zoom: 5});
+
+            var drawnItems = L.featureGroup().addTo(map);
+
+            // Test function - can be called from C++ or from Javascript
+            function centerMap(lat, lng) {
+                if (map.getCenter().lat != lat && map.getCenter().lng != lng) {
+                    map.setZoom(14);
+                    map.setView([lat, lng], map.zoom);
+                    console.log('Using lat : ' + lat + ' | Using lng : ' + lng)
+                }
+            }
+            // Debug test to determine if QWebChannel being established correctly.
+            window.webChannel = new QWebChannel(qt.webChannelTransport, function(channel)
+            {
+                var qmlObj = channel.objects.qmlLeaflet;
+                console.log('Calling QML');
+                qmlObj.setCenterMap.connect(function(latitude, longitude) {
+                    if (typeof qmlObj !== 'undefined') {
+                        centerMap(latitude, longitude);
+                    }
+                });
+                // Invoke the QML signal
+                var someLat = -37.823494;
+                var someLng = 144.913341;
+                qmlObj.updateCenterMap(someLat, someLng);
+                qmlObj.logStr('Using lat: ' + someLat);
+            });
+
+            var wmsLayer = L.tileLayer.wms('http://localhost:8080/geoserver/map_server/wms?', {
+                layers: 'TOPO-WMS'
+            }).addTo(map);
+
+            var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            })
+            
+            L.control.layers({
+                    "wmsLayer": wmsLayer.addTo(map),
+                    "osmLayer": osm.addTo(map)
+                }, {'overlays':drawnItems}, { position: 'topright', collapsed: false }).addTo(map);
+
+            map.addControl(new L.Control.Draw({
+                edit: {
+                    featureGroup: drawnItems,
+                    poly : {
+                        allowIntersection : false
+                    }
+                },
+                draw: {
+                    polygon : {
+                        allowIntersection: false,
+                        showArea:true
+                    }
+                }
+            }));
+
+            // Create the overlay tools
+            initialiseLeafletDraw(drawnItems, map);
+
+            // Start the OpenSky Networks track query
+            var trackLayer = L.layerGroup().addTo(map);
+            initiateTrackQuery(trackLayer);
+            
+        </script>
+
+  </body>
+</html>
