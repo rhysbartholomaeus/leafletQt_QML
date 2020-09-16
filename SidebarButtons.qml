@@ -13,6 +13,8 @@ Rectangle {
 
     signal createAircraft(string routeId)
 
+    signal startSITL()
+
     function emitCreateAircraftSignal(routeId){
         if(routeId === undefined){
             console.log('No ID provided')
@@ -45,8 +47,11 @@ Rectangle {
             onClicked: routeSelectionDialog.open()
         }
         Button {
-            text: "Unmapped Function"
-            onClicked: console.log("Unmapped...")
+            text: "Start SITL"
+            onClicked: {
+                startSITL()
+                console.log("Sent starting SITL")
+            }
         }
     }
 
