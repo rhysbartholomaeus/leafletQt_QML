@@ -2,6 +2,8 @@
 
 This project is a demonstration showcasing the packaging of the Javascript mapping framework [Leaflet](https://leafletjs.com/) into a QML/Qt application.
 
+I've also got a C++ implementation here: https://github.com/rhysbartholomaeus/leafletQt_CPP
+
 ## Requirements
 
 * Built on Qt 5.12.9 MSVC 2017 64 Bit
