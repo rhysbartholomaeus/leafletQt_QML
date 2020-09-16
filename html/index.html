@@ -74,7 +74,11 @@
 
             var map = new L.Map('map', {center: new L.LatLng(-35.022638, 138.904095), zoom: 5});
 
+            // Layer for overlays to sit on.
             var drawnItems = L.featureGroup().addTo(map);
+
+            // layer for ADS-B tracks to sit on.
+            var trackLayer = L.layerGroup().addTo(map);
 
             // Test function - can be called from C++ or from Javascript
             function centerMap(lat, lng) {
@@ -102,7 +106,7 @@
             });
 
             var wmsLayer = L.tileLayer.wms('http://localhost:8080/geoserver/map_server/wms?', {
-                layers: 'TOPO-WMS'
+                layers: 'TOPO-OSM-WMS'
             }).addTo(map);
 
             var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -112,7 +116,8 @@
             L.control.layers({
                     "wmsLayer": wmsLayer.addTo(map),
                     "osmLayer": osm.addTo(map)
-                }, {'overlays':drawnItems}, { position: 'topright', collapsed: false }).addTo(map);
+                }, {'overlays':drawnItems}, { position: 'topright', collapsed: true }
+                ).addTo(map);
 
             map.addControl(new L.Control.Draw({
                 edit: {
@@ -133,9 +138,8 @@
             initialiseLeafletDraw(drawnItems, map);
 
             // Start the OpenSky Networks track query
-            var trackLayer = L.layerGroup().addTo(map);
             initiateTrackQuery(trackLayer);
-            
+
         </script>
 
   </body>
