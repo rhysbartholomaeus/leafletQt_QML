@@ -56,11 +56,6 @@ function initialiseLeafletDraw(drawnItemsLayer, map){
         }
         drawnItemsLayer.addLayer(layer);
         commObject.overlayAdded(layer._leaflet_id);
-        // new QWebChannel(qt.webChannelTransport, function(channel)
-        //     {
-        //         var qmlObj = channel.objects.qmlLeaflet;
-        //         qmlObj.logStr('ID: ' + layer._leaflet_id);
-        //     });
     });
 
     // Object(s) edited - update popups
