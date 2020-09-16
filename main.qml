@@ -9,7 +9,7 @@ Window {
     width: 1024
     height: 750
     visible: true
-    title: qsTr("Tactical Map")
+    title: qsTr("Map Display")
 
     // Background
     Rectangle {
@@ -33,7 +33,6 @@ Window {
         function prefHeight(item){
             return rowMulti * item.Layout.rowSpan
         }
-
 
         // Side panel
         Rectangle {
@@ -64,21 +63,17 @@ Window {
                 anchors.centerIn: parent
             }
 
-            onGotShapeId:{
-                console.log('Got shape id' + id)
-            }
-
-
-
             Connections {
                 target: sideBar
                 onCreateAircraft: {
-                    console.log('Got route id', routeId)
                     mapDisplay.initAircraft(routeId)
                 }
 
             }
-
+            Connections {
+                target: sideBar
+                onStartSITL: mapDisplay.startSITL()
+            }
         }
 
         Rectangle{
