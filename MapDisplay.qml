@@ -14,6 +14,8 @@ Item {
 
     signal gotShapeId(string id)
 
+    signal mapLoad()
+
     function updateCenterMap (lat,lng) {
         console.log('Successfully executed callback.');
         setCenterMap(lat,lng);
@@ -47,6 +49,21 @@ Item {
         if(overlayId !== ""){
             webview.runJavaScript("initAircraft(drawnItems ," + overlayId +");");
         }
+    }
+
+    function startSITL(){
+//        var cmd = "fetch('http://127.0.0.1:5005/startSITL', {mode: 'cors'})
+//        .then(function(response) {
+//          return response.text();
+//        })
+//        .then(function(text) {
+//          console.log('Request successful', text);
+//        })
+//        .catch(function(error) {
+//          log('Request failed', error)
+//        });"
+//        webview.runJavaScript(cmd);
+        console.log('Not currently implemented')
     }
 }
 
