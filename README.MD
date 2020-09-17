@@ -90,7 +90,35 @@ The following steps were taken to establish a WMS service for Leaflet to consume
     ```
     This creates a tilelayer pointed to your local instance of the WMS service. **Note**: This assumes that you have imported the necessary Javascript / CSS files. For more details, refer to [Leaflet getting started guide.](https://leafletjs.com/examples/quick-start/)
 
+### Ok that's cool, what if you want to use something like GeoTIFF?
+
+1. Obtain a GeoTIF source, for example: https://earthobservatory.nasa.gov/features/NightLights/page3.php
+2. Create a directory in the GeoServer data_dir directory, IE: `geoserver/data_dir/data/YOURDATA` and place the file(s) in there.
+3. Start and open GeoServer.
+4. Click Stores -> Add new Store
+5. Provide a Data Source Name and link the file under the Connection Parameters.
+6. On the New Layer page, click Publish
+7. Check the coordinate reference system is consitent with the captured imagery (IE: EPSG 4326)
+8. Open the Publishing tab. Verify under Root Layer Capabilities that WMS Global Settings are selected.
+9. Click Save
+10. Update your map to include the WMS layer using your GeoTIFF raster image, IE:
+
+```
+    var darkmarble = L.tileLayer.wms('http://localhost:8080/geoserver/map_server/wms?', {
+        layers: 'BlackMarble_2016_D2_geo'
+    }).addTo(map);
+```
+Don't forget to add a control as well:
+```
+    L.control.layers({
+            "wmsLayer": wmsLayer.addTo(map),
+            "osmLayer": osm.addTo(map),
+            "darkmarble": darkmarble.addTo(map)
+        }).addTo(map);
+```
+
 ## Connecting QML to Javascript
+
 Communication between the Javascript running on the HTML page and the host QML application can be achieved via the following.
 
 In QML, create a Qt object or similar:

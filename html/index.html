@@ -109,13 +109,18 @@
                 layers: 'TOPO-OSM-WMS'
             }).addTo(map);
 
+            var darkmarble = L.tileLayer.wms('http://localhost:8080/geoserver/map_server/wms?', {
+                layers: 'BlackMarble_2016_D2_geo'
+            }).addTo(map);
+
             var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             })
             
             L.control.layers({
                     "wmsLayer": wmsLayer.addTo(map),
-                    "osmLayer": osm.addTo(map)
+                    "osmLayer": osm.addTo(map),
+                    "darkmarble": darkmarble.addTo(map)
                 }, {'overlays':drawnItems}, { position: 'topright', collapsed: true }
                 ).addTo(map);
 
