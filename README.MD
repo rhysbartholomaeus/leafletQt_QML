@@ -310,3 +310,32 @@ Tool-tip bindings can be added to showcase specific details for a track. Note th
 
 ![Aircraft tracks](./images/aircraft_track.png)
 
+Binding the tooltip to the track data:
+
+```
+    pointToLayer: function(feature, latlng) {
+        // style the aeroplane loction markers with L.DivIcons
+        var marker = L.trackSymbol(latlng, {
+        trackId: feature.id,
+        fill: true,
+        fillColor: '#0000ff',
+        fillOpacity: 1.0,
+        stroke: true,
+        color: '#000000',
+        opacity: 1.0,
+        weight: 1.0,
+        speed: feature.properties['velocity'],
+        course: feature.properties['true_track'],
+        heading: feature.properties['true_track']
+    }).bindTooltip(
+            '<b>'+ feature.properties['callsign'] 
+                +'</b><br>Altitude: '+ feature.properties['geo_altitude'] +' m <br>' 
+                + 'Speed: ' + feature.properties['velocity'] + ' m/s',
+            {
+                permanent: false, opacity: 0.7}
+        );
+        return marker;
+    }
+    }).addTo(trackLayer);
+```
+Full code can be found in the `html/resources/leaflet.realtime/QueryOpenSkyNetworks.js` file.
