@@ -15,6 +15,8 @@ Rectangle {
 
     signal startSITL()
 
+    signal startMoving()
+
     function emitCreateAircraftSignal(routeId){
         if(routeId === undefined){
             console.log('No ID provided')
@@ -30,8 +32,8 @@ Rectangle {
         id : grid
         anchors.fill: parent
         anchors.margins: 5
-        rows    : 6
-        columns : 6
+        rows    : 3
+        columns : 2
         columnSpacing: 5
         property double colMulti : grid.width / grid.columns
         property double rowMulti : grid.height / grid.rows
@@ -51,6 +53,13 @@ Rectangle {
             onClicked: {
                 startSITL()
                 console.log("Sent starting SITL")
+            }
+        }
+        Button {
+            text: "Start moving"
+            onClicked: {
+                startMoving()
+                console.log("Sent starting movement")
             }
         }
     }

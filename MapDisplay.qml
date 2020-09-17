@@ -52,18 +52,35 @@ Item {
     }
 
     function startSITL(){
-//        var cmd = "fetch('http://127.0.0.1:5005/startSITL', {mode: 'cors'})
-//        .then(function(response) {
-//          return response.text();
-//        })
-//        .then(function(text) {
-//          console.log('Request successful', text);
-//        })
-//        .catch(function(error) {
-//          log('Request failed', error)
-//        });"
-//        webview.runJavaScript(cmd);
-        console.log('Not currently implemented')
+        var cmd = "fetch('http://127.0.0.1:5005/startSITL', {mode: 'cors'})
+        .then(function(response) {
+          return response.text();
+        })
+        .then(function(text) {
+          console.log('Request successful', text);
+        })
+        .catch(function(error) {
+          log('Request failed', error)
+        });"
+        webview.runJavaScript(cmd);
+        //console.log('Not currently implemented')
+    }
+
+    function startMoving(){
+        var cmd = "fetch('http://127.0.0.1:5005/goToLocation', {mode: 'cors'})
+        .then(function(response) {
+          return response.text();
+        })
+        .then(function(text) {
+          console.log('Request successful', text);
+        })
+        .catch(function(error) {
+          log('Request failed', error)
+        });"
+        webview.runJavaScript(cmd);
+
+        var cmd2 = "initiateArdupilotQuery(trackLayer);"
+        webview.runJavaScript(cmd2);
     }
 }
 

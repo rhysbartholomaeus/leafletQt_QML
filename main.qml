@@ -74,6 +74,10 @@ Window {
                 target: sideBar
                 onStartSITL: mapDisplay.startSITL()
             }
+            Connections {
+                target: sideBar
+                onStartMoving: mapDisplay.startMoving()
+            }
         }
 
         Rectangle{
@@ -82,11 +86,11 @@ Window {
             Layout.rowSpan   : 1
             Layout.columnSpan: 3
             Layout.preferredWidth  : grid.prefWidth(this)
-            Layout.preferredHeight : grid.prefHeight(this)
+            Layout.preferredHeight : 25
             Label {
                 text: "Overlays"
                 color: "#F0F3F4"
-                font.pixelSize: 22
+                font.pixelSize: 18
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
             }
