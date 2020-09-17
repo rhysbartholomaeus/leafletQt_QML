@@ -119,8 +119,8 @@
             
             L.control.layers({
                     "wmsLayer": wmsLayer.addTo(map),
-                    "osmLayer": osm.addTo(map),
-                    "darkmarble": darkmarble.addTo(map)
+                    "darkmarble": darkmarble.addTo(map),
+                    "osmLayer": osm.addTo(map)                    
                 }, {'overlays':drawnItems}, { position: 'topright', collapsed: true }
                 ).addTo(map);
 
@@ -146,6 +146,5 @@
             initiateTrackQuery(trackLayer);
 
         </script>
-
   </body>
 </html>

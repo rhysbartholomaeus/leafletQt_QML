@@ -14,6 +14,8 @@ Item {
 
     signal gotShapeId(string id)
 
+    signal removedOverlayId(string id)
+
     signal mapLoad()
 
     function updateCenterMap (lat,lng) {
@@ -30,6 +32,11 @@ Item {
         gotShapeId(overlayId)
     }
 
+    function overlayRemoved(overlayId){
+        // Emit the removed overlay ID
+        removedOverlayId(overlayId)
+    }
+
     WebChannel {
         id: webChannel
         registeredObjects: [pageChannel]
@@ -43,6 +50,12 @@ Item {
         anchors.topMargin: 0
         webChannel: webChannel
         settings.localContentCanAccessRemoteUrls: true
+        onLoadingChanged: {
+            if(loadRequest.status === WebEngineView.LoadStartedStatus){
+                // emit the page load signal
+                mapLoad()
+            }
+        }
     }
 
     function initAircraft(overlayId){
@@ -83,4 +96,3 @@ Item {
         webview.runJavaScript(cmd2);
     }
 }
-

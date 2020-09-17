@@ -65,10 +65,7 @@ Window {
 
             Connections {
                 target: sideBar
-                onCreateAircraft: {
-                    mapDisplay.initAircraft(routeId)
-                }
-
+                onCreateAircraft: mapDisplay.initAircraft(routeId)
             }
             Connections {
                 target: sideBar
@@ -105,6 +102,14 @@ Window {
             Connections {
                 target: mapDisplay
                 onGotShapeId: overlayList.overlayIdAdded(id)
+            }
+            Connections {
+                target: mapDisplay
+                onRemovedOverlayId: overlayList.overlayIdRemoved(id)
+            }
+            Connections {
+                target: mapDisplay
+                onMapLoad: overlayList.clearOverlayIds()
             }
         }
     }

@@ -13,13 +13,17 @@ Rectangle {
         CustomListModel.overlayListModel.append({name: id})
     }
 
+    signal overlayIdRemoved(string id)
+    onOverlayIdRemoved:{
+        var itemIndex = findItem(id)
+        if(itemIndex > -1){
+            CustomListModel.overlayListModel.remove(itemIndex)
+        }
+    }
+
     signal clearOverlayIds()
     onClearOverlayIds:{
         CustomListModel.overlayListModel.clear()
-    }
-
-    ListModel {
-        id: overlayNameModel
     }
 
     Component {
@@ -52,5 +56,16 @@ Rectangle {
         model: CustomListModel.overlayListModel
         delegate: overlayNameDelegate
         clip: true
+    }
+
+    function findItem(itemId){
+        if(CustomListModel.overlayListModel.count > 0){
+            for(var i = 0 ; i < CustomListModel.overlayListModel.count; ++i){
+                if(CustomListModel.overlayListModel.get(i)["name"] === itemId){
+                    return i;
+                }
+            }
+        }
+        return -1
     }
 }
