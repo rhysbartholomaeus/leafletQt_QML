@@ -2,6 +2,8 @@
 
 This project is a demonstration showcasing the packaging of the Javascript mapping framework [Leaflet](https://leafletjs.com/) into a QML/Qt application.
 
+![QML test application](./images/overview.png)
+
 ## Requirements
 
 * Built on Qt 5.12.9 MSVC 2017 64 Bit
@@ -289,6 +291,10 @@ Unfortuantely, this addon creates a moving marker using a timer for the entire j
 
 Note that the Moving Marker library only supports Polylines. Other polygons (squares, rectangles, circles, etc) are not supported due to differences in how the point data is stored for those shapes. 
 
+Below is a custom icon attached to a moving marker, following the designated route:
+
+![Moving Marker](./images/movingMarkerCustom.png)
+
 #### Using a controllable data soruce - ArduPilot
 
 I also trialled attaching an Ardupilot Software in the Loop simulated drone and the Python DroneKit library to the Leaflet marker display. This was a separate flask server that allows a user to spin up a Ardupilot drone and retrieve it's position. Commands were going to be added to allow the user to manually direct the drone around the map (using the go-to-location MAVProxy commands), however this has not been fully implemented at this stage. 
@@ -296,3 +302,8 @@ I also trialled attaching an Ardupilot Software in the Loop simulated drone and 
 ### Leaflet Track Marker
 
 This addon provides the ability to replace the standard marker icon with a marker that showcases the heading and speed of the data in question.
+
+Tool-tip bindings can be added to showcase specific details for a track. Note that each layer is automatically updated when data changes, reducing the overhead required for the implementing programmer. 
+
+![Aircraft tracks](./images/aircraft_track.png)
+
