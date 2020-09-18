@@ -2,15 +2,20 @@ import QtQuick 2.0
 import QtQuick.Window 2.0
 import QtWebEngine 1.8
 import QtWebChannel 1.0
+import QtQuick.Dialogs 1.2
+import QtQuick.Controls 2.0
+import QtQuick.Layouts 1.3
 
 Item {
     id: pageChannel
     WebChannel.id: "qmlLeaflet"
 
-    property double latitude : -37.823494
-    property double longitude : 144.913341
+    property double latitude : 0
+    property double longitude : 0
 
     signal setCenterMap(double lat,double lng)
+
+    signal setOverlayText(string layerId, string titleText, string descriptionText)
 
     signal gotShapeId(string id)
 
@@ -95,4 +100,52 @@ Item {
         var cmd2 = "initiateArdupilotQuery(trackLayer);"
         webview.runJavaScript(cmd2);
     }
+
+    Dialog{
+        id: overlayTextEditor
+        // Layer ID gleaned from the invoking Javascript call
+        property var layerId
+        modality: Qt.WindowModal
+        title: "Edit layer " + layerId
+
+        contentItem: Rectangle{
+            color: "#2C3E50"
+            anchors.margins: 5
+            implicitWidth: overlayTitle.width + 10
+            implicitHeight: grid.grid.height
+            GridLayout {
+                id : grid
+                anchors.fill: parent
+                anchors.margins: 5
+                rows    : 3
+                columns : 1
+                TextField{
+                   id: overlayTitle
+                   placeholderText: qsTr("Enter overlay title")
+                }
+                TextField{
+                   id: overlayDescription
+                   placeholderText: qsTr("Enter overlay description")
+                }
+                Button{
+                    anchors.verticalCenter: parent
+                    id: setOverlayProperties
+                    text: "Ok"
+                    onClicked:{
+                            // Emit the signal for capture on the javascript side
+                            overlayTextEditor.close()
+                            setOverlayText(overlayTextEditor.layerId, overlayTitle.text, overlayDescription.text)
+                            overlayTitle.clear()
+                            overlayDescription.clear()
+                        }
+                }
+            }
+        }
+    }
+
+    function editPopupText(layerId){
+        overlayTextEditor.layerId = layerId
+        overlayTextEditor.open()
+    }
+
 }
