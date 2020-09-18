@@ -19,6 +19,8 @@ I've also got a C++ implementation here: https://github.com/rhysbartholomaeus/le
 
 Open the .PRO file in Qt Creator and build and run the project as per usual for Qt applications. 
 
+**Note:** Disable Shadow Building in the project settings.
+
 ## Usage
 
 Start the application in Qt Creator. The default map will load using the internet-provided OpenStreetMaps tile server.
