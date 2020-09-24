@@ -15,18 +15,22 @@ Rectangle {
 
     signal startSITL()
 
-    signal startMoving()
+    signal moveDrone()
+
+    signal setupDrone()
 
     function emitCreateAircraftSignal(routeId){
         if(routeId === undefined){
-            console.log('No ID provided')
+            // If no id present but we have a route to choose from, default to it.
+            if(CustomListModel.overlayListModel.count > 0){
+                var defaultId = CustomListModel.overlayListModel.get(0).name
+                createAircraft(defaultId)
+            }
         }
         else{
-            console.log('Using ID: ', routeId )
             createAircraft(routeId)
         }
     }
-
 
     GridLayout {
         id : grid
@@ -44,31 +48,57 @@ Rectangle {
             return rowMulti * item.Layout.rowSpan
         }
 
+        // Button used to create a Moving Marker representing an aircraft following
+        // a polyline.
         Button {
             text: "Create Aircraft"
             onClicked: routeSelectionDialog.open()
         }
+
+        // Invokes the MapDisplay GET request
         Button {
+            id: sitlBtn
             text: "Start SITL"
             onClicked: {
                 startSITL()
                 console.log("Sent starting SITL")
+                droneSetupBtn.enabled = true
+                sitlBtn.enabled = false
             }
         }
         Button {
-            text: "Start moving"
+            id: droneSetupBtn
+            text: "Setup Drone"
+            enabled: false
             onClicked: {
-                startMoving()
-                console.log("Sent starting movement")
+                setupDrone()
+                console.log("set up drone")
+                // Ideally there would be a callback to wait until the drone is at
+                // a suitable height etc
+                droneSetupBtn.enabled = false
+                droneMoveBtn.enabled = true
+            }
+        }
+        Button {
+            id: droneMoveBtn
+            text: "Move Drone"
+            enabled: false
+            onClicked: {
+                moveDrone()
+                console.log("MoveToLocation")
+                //droneSetupBtn.enabled = false
             }
         }
     }
 
     Dialog {
         id: routeSelectionDialog
-        modality: dialogModal.checked ? Qt.WindowModal : Qt.NonModal
+        modality: Qt.WindowModal
         title: "Select a route for aircraft to follow:"
-        onButtonClicked: emitCreateAircraftSignal(currentlySelectedValue);
+        onButtonClicked: {
+            emitCreateAircraftSignal(currentlySelectedValue);
+        }
+
         Rectangle{
             anchors.margins: 5
             implicitWidth: 300
@@ -96,7 +126,7 @@ Rectangle {
                                 top.ListView.view.currentIndex = model.index;
                                 // TacSit will grab this signal and run the corresponding
                                 // JS on the index.html
-                                currentlySelectedValue = CustomListModel.overlayListModel.get(model.index).name
+                                currentlySelectedValue = CustomListModel.overlayListModel.get(parent.ListView.currentIndex).name
                             }
                         }
                     }
