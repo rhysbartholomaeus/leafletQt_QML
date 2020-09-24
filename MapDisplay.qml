@@ -7,7 +7,7 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 
 Item {
-    id: pageChannel
+    id: channel
     WebChannel.id: "qmlLeaflet"
 
     property double latitude : 0
@@ -22,6 +22,8 @@ Item {
     signal removedOverlayId(string id)
 
     signal mapLoad()
+
+    signal moveDroneSignal()
 
     function updateCenterMap (lat,lng) {
         console.log('Successfully executed callback.');
@@ -44,7 +46,7 @@ Item {
 
     WebChannel {
         id: webChannel
-        registeredObjects: [pageChannel]
+        registeredObjects: [channel]
     }
 
     WebEngineView {
@@ -69,8 +71,8 @@ Item {
         }
     }
 
-    function startSITL(){
-        var cmd = "fetch('http://127.0.0.1:5005/startSITL', {mode: 'cors'})
+    function createGetRequest(url){
+        return "fetch('"+ url +"', {mode: 'cors'})
         .then(function(response) {
           return response.text();
         })
@@ -80,25 +82,33 @@ Item {
         .catch(function(error) {
           log('Request failed', error)
         });"
-        webview.runJavaScript(cmd);
-        //console.log('Not currently implemented')
     }
 
-    function startMoving(){
-        var cmd = "fetch('http://127.0.0.1:5005/goToLocation', {mode: 'cors'})
-        .then(function(response) {
-          return response.text();
-        })
-        .then(function(text) {
-          console.log('Request successful', text);
-        })
-        .catch(function(error) {
-          log('Request failed', error)
-        });"
+    function startSITL(){
+        var cmd = createGetRequest("http://127.0.0.1:5005/startSITL");
+        webview.runJavaScript(cmd);
+    }
+
+    function setupDrone(){
+        var cmd = createGetRequest("http://127.0.0.1:5005/setupDrone");
         webview.runJavaScript(cmd);
 
-        var cmd2 = "initiateArdupilotQuery(trackLayer);"
+        var cmd2 = "initiateArdupilotQuery(ardupilotLayer, map);"
         webview.runJavaScript(cmd2);
+    }
+
+    function moveDrone(){
+        console.log('MapDisplay-moveDrone');
+        var cmd = createGetRequest("http://127.0.0.1:5005/goToLocation");
+        //webview.runJavaScript(cmd);
+        // Fire off moveDrone signal to the webpage
+        moveDroneSignal();
+    }
+
+    function setDroneTargetPosition(lat,lng){
+        console.log('Setting drone target');
+        var cmd = createGetRequest("http://127.0.0.1:5005/goToLocation?lat="+lat+"&lon="+lng);
+        webview.runJavaScript(cmd);
     }
 
     Dialog{
@@ -112,7 +122,7 @@ Item {
             color: "#2C3E50"
             anchors.margins: 5
             implicitWidth: overlayTitle.width + 10
-            implicitHeight: grid.grid.height
+            //implicitHeight: grid.grid.height
             GridLayout {
                 id : grid
                 anchors.fill: parent
@@ -137,7 +147,7 @@ Item {
                             setOverlayText(overlayTextEditor.layerId, overlayTitle.text, overlayDescription.text)
                             overlayTitle.clear()
                             overlayDescription.clear()
-                        }
+                    }
                 }
             }
         }
