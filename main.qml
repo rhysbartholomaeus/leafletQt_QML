@@ -73,7 +73,11 @@ Window {
             }
             Connections {
                 target: sideBar
-                onStartMoving: mapDisplay.startMoving()
+                onMoveDrone: mapDisplay.moveDrone()
+            }
+            Connections {
+                target: sideBar
+                onSetupDrone: mapDisplay.setupDrone()
             }
         }
 
@@ -110,6 +114,22 @@ Window {
             Connections {
                 target: mapDisplay
                 onMapLoad: overlayList.clearOverlayIds()
+            }
+        }
+
+        Rectangle{
+            id: routeLabel
+            color: "#5D6D7E"
+            Layout.rowSpan   : 1
+            Layout.columnSpan: 3
+            Layout.preferredWidth  : grid.prefWidth(this)
+            Layout.preferredHeight : 25
+            Label {
+                text: "Routes"
+                color: "#F0F3F4"
+                font.pixelSize: 18
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
             }
         }
     }
