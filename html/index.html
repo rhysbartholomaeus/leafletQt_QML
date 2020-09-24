@@ -56,7 +56,7 @@
 
     <!-- Qt Webchannel - Requires HTML to be loaded by QWebEngineView-->
 
-    <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script type="text/javascript" src="qrc:///html/resources/qwebchannel.js"></script>
 
     <!-- Moving marker addon -->
 
@@ -65,10 +65,11 @@
     <!-- Test a moving aircraft -->
 
     <script type="text/javascript" src="qrc:///html/resources/leaflet.realtime/test_aircraft.js"></script>
+
     </head>
     <body>
         
-        <div id="map" style="height:100%; width:100%;position:absolute; border: 1px solid rgb(2, 89, 146)"></div>
+        <div id="map" style="height:100%; width:100%;position:absolute; border: 1px solid rgb(9, 89, 143)"></div>
 
         <script>
 
@@ -77,8 +78,17 @@
             // Layer for overlays to sit on.
             var drawnItems = L.featureGroup().addTo(map);
 
+            var moveDrone = false
+
             // layer for ADS-B tracks to sit on.
-            var trackLayer = L.layerGroup().addTo(map);
+            var trackLayer = L.featureGroup()
+            .on('click', function(){alert("Got click on Plane.");})
+            .addTo(map);
+
+            // layer for an Ardupilot SITL drone to sit on.
+            var ardupilotLayer = L.featureGroup().addTo(map);
+                
+            //initiateArdupilotQuery(ardupilotLayer, map)
 
             // Test function - can be called from C++ or from Javascript
             function centerMap(lat, lng) {
@@ -88,22 +98,6 @@
                     console.log('Using lat : ' + lat + ' | Using lng : ' + lng)
                 }
             }
-            // Debug test to determine if QWebChannel being established correctly.
-            window.webChannel = new QWebChannel(qt.webChannelTransport, function(channel)
-            {
-                var qmlObj = channel.objects.qmlLeaflet;
-                console.log('Calling QML');
-                qmlObj.setCenterMap.connect(function(latitude, longitude) {
-                    if (typeof qmlObj !== 'undefined') {
-                        centerMap(latitude, longitude);
-                    }
-                });
-                // Invoke the QML signal
-                var someLat = -37.823494;
-                var someLng = 144.913341;
-                qmlObj.updateCenterMap(someLat, someLng);
-                qmlObj.logStr('Using lat: ' + someLat);
-            });
 
             var wmsLayer = L.tileLayer.wms('http://localhost:8080/geoserver/map_server/wms?', {
                 layers: 'TOPO-OSM-WMS'
@@ -144,6 +138,38 @@
 
             // Start the OpenSky Networks track query - See resources/leaflet.realtime/QueryOpenSkyNetworks.js
             initiateTrackQuery(trackLayer);
+
+            // Placeholder to select drone
+            var selectedDrone = false;
+
+            // On click - drone selected
+            trackLayer.on('click', function (event) {
+                var clickedMarker = event.layer;
+                // selectedDrone = true;
+                console.log('Clicked on plane.' + clickedMarker);
+            });
+
+            // Inline function to provide ability to direct a drone - If it exists.
+            // Sloppy way of doing this - markers should be per drone or similar - but proof-of-concept so YOLO
+            var dronePosMarker = null;
+            map.on('click', function(e) {
+                if(moveDrone) {
+                    var location = e.latlng;
+                    console.log('Going to location: ' + location);
+                    if(dronePosMarker != null){
+                        ardupilotLayer.removeLayer(dronePosMarker);
+                    }
+                    dronePosMarker = L.marker(location,{
+                        title: 'Drone moving here'
+                    }).addTo(ardupilotLayer);
+                    moveDrone = false;
+                    window.commObject.logStr('Drone moving to location: ' + location.lat + "," + location.lng);
+                    if(location != undefined && location.lat != undefined && location.lng != undefined){
+                        window.commObject.setDroneTargetPosition(location.lat,location.lng);
+                    }
+                    
+                }   
+            });
 
         </script>
   </body>

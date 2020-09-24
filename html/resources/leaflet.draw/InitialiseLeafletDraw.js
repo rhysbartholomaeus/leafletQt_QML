@@ -1,13 +1,22 @@
 function initialiseLeafletDraw(drawnItemsLayer, map){
-
+    
     window.webChannel = new QWebChannel(qt.webChannelTransport, function(channel)
     {
         var qmlObj = channel.objects.qmlLeaflet;
         window.commObject = qmlObj;
+        // Connect our QML object to the setOverlayText signal
         commObject.setOverlayText.connect(function(layerId, titleText, descriptionText) {
             if (typeof commObject !== 'undefined') {
                 console.log('Got signal for setOverlayText')
                 uiSetShapePropertiesCallback(drawnItemsLayer, layerId, titleText , descriptionText)
+            }
+        });
+        commObject.moveDroneSignal.connect(function() {
+            if (typeof commObject !== 'undefined') {
+                console.log('Moving drone enabled');
+                moveDrone = true;
+            }else{
+                console.log('CommObject undefined.')
             }
         });
     });
