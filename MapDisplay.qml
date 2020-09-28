@@ -25,6 +25,10 @@ Item {
 
     signal moveDroneSignal()
 
+    signal createDroneSignal()
+
+    signal followRouteSignal(string overlayId)
+
     function updateCenterMap (lat,lng) {
         console.log('Successfully executed callback.');
         setCenterMap(lat,lng);
@@ -65,10 +69,11 @@ Item {
         }
     }
 
-    function initAircraft(overlayId){
-        if(overlayId !== ""){
-            webview.runJavaScript("initAircraft(drawnItems ," + overlayId +");");
-        }
+    function initAircraft(){ //(overlayId){
+        createDroneSignal()
+//        if(overlayId !== ""){
+//            webview.runJavaScript("initAircraft(drawnItems ," + overlayId +");");
+//        }
     }
 
     function createGetRequest(url){
@@ -98,9 +103,6 @@ Item {
     }
 
     function moveDrone(){
-        console.log('MapDisplay-moveDrone');
-        var cmd = createGetRequest("http://127.0.0.1:5005/goToLocation");
-        //webview.runJavaScript(cmd);
         // Fire off moveDrone signal to the webpage
         moveDroneSignal();
     }

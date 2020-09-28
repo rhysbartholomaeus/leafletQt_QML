@@ -65,7 +65,7 @@ Window {
 
             Connections {
                 target: sideBar
-                onCreateAircraft: mapDisplay.initAircraft(routeId)
+                onCreateAircraft: mapDisplay.initAircraft() //(routeId)
             }
             Connections {
                 target: sideBar
@@ -78,6 +78,10 @@ Window {
             Connections {
                 target: sideBar
                 onSetupDrone: mapDisplay.setupDrone()
+            }
+            Connections {
+                target: sideBar
+                onFollowRoute: mapDisplay.followRouteSignal(routeId)
             }
         }
 
