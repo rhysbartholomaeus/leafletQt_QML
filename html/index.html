@@ -78,7 +78,11 @@
             // Layer for overlays to sit on.
             var drawnItems = L.featureGroup().addTo(map);
 
-            var moveDrone = false
+            var moveDrone = false;
+
+            var createDrone = false;
+
+            var moveSITLDrone = false;
 
             // layer for ADS-B tracks to sit on.
             var trackLayer = L.featureGroup()
@@ -148,7 +152,7 @@
                 // selectedDrone = true;
                 console.log('Clicked on plane.' + clickedMarker);
             });
-
+              
             // Inline function to provide ability to direct a drone - If it exists.
             // Sloppy way of doing this - markers should be per drone or similar - but proof-of-concept so YOLO
             var dronePosMarker = null;
@@ -167,10 +171,15 @@
                     if(location != undefined && location.lat != undefined && location.lng != undefined){
                         window.commObject.setDroneTargetPosition(location.lat,location.lng);
                     }
-                    
+                    transition(location);
+                }
+                if(createDrone){
+                    initAircraft(ardupilotLayer,e.latlng);
+                    createDrone = false;
+                    //transition(e.latlng);
                 }   
+                
             });
-
         </script>
   </body>
 </html>

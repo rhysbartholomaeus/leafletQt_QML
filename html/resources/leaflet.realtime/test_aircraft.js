@@ -3,10 +3,18 @@
 var lat;
 var lon;
 var callsign;
-//var waypoints = [];
+var position;
+var waypoints = [];
+var numWaypoints;
+var numDeltas = 100;
+var delay = 50; //milliseconds
+var i = 0;
+var wayPtIndex = 0;
+var deltaLat;
+var deltaLng;
+var testDroneMarker;
 
-function initAircraft(layer, routeId){
-
+function initAircraft(layer, latlng){
     var planeIcon = L.icon({
         iconUrl: './resources/images/DroneSymbol.png',    
         iconSize:     [32, 32], // size of the icon
@@ -16,12 +24,74 @@ function initAircraft(layer, routeId){
 
     // Get the starting position and assign to the global variables.
     callsign = "TAS";
-    var waypoints = layer.getLayer(routeId)._latlngs;
-    var aircraftMarker = L.Marker.movingMarker(waypoints,30000, {icon: planeIcon}).addTo(map);
-    console.log(aircraftMarker);
-    aircraftMarker.start();
+    //var waypoints = layer.getLayer(routeId)._latlngs;
+    //var aircraftMarker = L.Marker.movingMarker(waypoints,30000, {icon: planeIcon}).addTo(map);
+    testDroneMarker = L.marker(latlng,{
+        title: 'TestDrone01',
+        icon: planeIcon
+    }).addTo(layer);
+    position = testDroneMarker.getLatLng();
+    // console.log(aircraftMarker);
+    // aircraftMarker.start();
 }
 
 function followRoute(layer,routeId){
-    // Use a leaflet shape layer and route ID to shift the aircraft around. 
+    var routeLayer = layer.getLayer(routeId);
+    console.log(routeLayer);
+    if (routeLayer instanceof L.Polyline) {
+        waypoints = layer.getLayer(routeId)._latlngs;
+        numWaypoints = waypoints.length
+        // Kick off transition to first marker.
+        transition(waypoints[0]);
+        wayPtIndex ++;
+        followWaypoints();
+    }
+    else{
+        alert('Route following only works when a polyline shape is selected as the route.');
+    }
+}
+
+// Intermediate location.
+function transition(result){
+    i = 0;
+    // Calculate distance to determine number of deltas
+    var distance = result.distanceTo(position);
+    var speed = 15; // This isn't a real velocity, since the movement system is based on delay + delta increment.
+                    // Want realism? Use the SITL drone.
+    // Update deltas to ensure consistent speed between points.
+    numDeltas = (distance / speed) ;
+    deltaLat = (result.lat - position.lat)/numDeltas;
+    deltaLng = (result.lng - position.lng)/numDeltas;
+    moveMarker();
+}
+
+function moveMarker(){
+    position.lat += deltaLat;
+    position.lng += deltaLng;
+
+    testDroneMarker.setLatLng(position);
+    if(i < numDeltas){
+        i++;
+        setTimeout(moveMarker, delay);
+    }
+}
+
+// A callback function that checks the state of the current leg with a waypoint mission.
+function followWaypoints(){
+    // One method to keep track of how our waypoint journey is going.
+    if(i < numDeltas){
+        setTimeout(followWaypoints, delay);   
+    }
+    else{
+        // Verify our current waypoint index is within bounds
+        if(wayPtIndex < numWaypoints){
+            transition(waypoints[wayPtIndex]);
+            ++wayPtIndex;
+            // Kick off the callback again
+            followWaypoints()
+        }else{
+            // Reset waypoint index - we've finished.
+            wayPtIndex = 0;
+        } 
+    }
 }

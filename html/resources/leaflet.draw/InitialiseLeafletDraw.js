@@ -15,8 +15,20 @@ function initialiseLeafletDraw(drawnItemsLayer, map){
             if (typeof commObject !== 'undefined') {
                 console.log('Moving drone enabled');
                 moveDrone = true;
-            }else{
-                console.log('CommObject undefined.')
+            }
+        });
+        commObject.createDroneSignal.connect(function() {
+            if (typeof commObject !== 'undefined') {
+                console.log('Creating drone');
+                createDrone = true;
+                alert('Select anywhere on map to place drone.');
+            }
+        });
+        commObject.followRouteSignal.connect(function(routeId) {
+            if (typeof commObject !== 'undefined') {
+                // Call the test_aircraft.js followRoute method
+                // Yes this is bad design - Sue me.
+                followRoute(drawnItemsLayer, routeId);
             }
         });
     });
@@ -97,6 +109,7 @@ function getPopupContent(layer, displayText = "") {
         return displayText + "<br/>" + "Area: "+L.GeometryUtil.readableArea(area, true);
     // Polyline - distance
     } else if (layer instanceof L.Polyline) {
+        console.log(layer);
         var latlngs = layer._defaultShape ? layer._defaultShape() : layer.getLatLngs(),
             distance = 0;
         if (latlngs.length < 2) {
@@ -121,5 +134,4 @@ function uiSetShapePropertiesCallback(drawnItemsLayer, layerId, layerTitle, laye
     layer.feature.properties.description = layerText;
     var content = getPopupContent(layer, layerTitle);
     layer.bindPopup(content);
-    console.log(layer);
 }
