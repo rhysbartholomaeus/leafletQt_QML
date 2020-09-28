@@ -11,7 +11,7 @@ Rectangle {
 
     property var currentlySelectedValue
 
-    signal createAircraft(string routeId)
+    signal createAircraft() //(string routeId)
 
     signal startSITL()
 
@@ -19,16 +19,18 @@ Rectangle {
 
     signal setupDrone()
 
-    function emitCreateAircraftSignal(routeId){
+    signal followRoute(string routeId)
+
+    function emitFollowRouteSignal(routeId){
         if(routeId === undefined){
             // If no id present but we have a route to choose from, default to it.
             if(CustomListModel.overlayListModel.count > 0){
                 var defaultId = CustomListModel.overlayListModel.get(0).name
-                createAircraft(defaultId)
+                followRoute(defaultId)
             }
         }
         else{
-            createAircraft(routeId)
+            followRoute(routeId)
         }
     }
 
@@ -52,9 +54,33 @@ Rectangle {
         // a polyline.
         Button {
             text: "Create Aircraft"
-            onClicked: routeSelectionDialog.open()
+            onClicked: {
+                createAircraft()
+                followRouteBtn.enabled = true
+                droneMoveBtn.enabled = true
+                this.enabled = false
+            }//routeSelectionDialog.open()
         }
-
+        Button {
+            id: followRouteBtn
+            text: "Follow Route"
+            enabled: false
+            onClicked: {
+                // Fire signal to be picked up by MapDisplay which interacts
+                // with the HTML
+                routeSelectionDialog.open()
+            }
+        }
+        Button {
+            id: droneMoveBtn
+            text: "Move Drone"
+            enabled: false
+            onClicked: {
+                // Fire signal to be picked up by MapDisplay which interacts
+                // with the HTML
+                moveDrone()
+            }
+        }
         // Invokes the MapDisplay GET request
         Button {
             id: sitlBtn
@@ -79,16 +105,6 @@ Rectangle {
                 droneMoveBtn.enabled = true
             }
         }
-        Button {
-            id: droneMoveBtn
-            text: "Move Drone"
-            enabled: false
-            onClicked: {
-                moveDrone()
-                console.log("MoveToLocation")
-                //droneSetupBtn.enabled = false
-            }
-        }
     }
 
     Dialog {
@@ -96,7 +112,7 @@ Rectangle {
         modality: Qt.WindowModal
         title: "Select a route for aircraft to follow:"
         onButtonClicked: {
-            emitCreateAircraftSignal(currentlySelectedValue);
+            emitFollowRouteSignal(currentlySelectedValue);
         }
 
         Rectangle{
@@ -124,9 +140,7 @@ Rectangle {
                             anchors.fill: parent
                             onClicked: {
                                 top.ListView.view.currentIndex = model.index;
-                                // TacSit will grab this signal and run the corresponding
-                                // JS on the index.html
-                                currentlySelectedValue = CustomListModel.overlayListModel.get(parent.ListView.currentIndex).name
+                                currentlySelectedValue = CustomListModel.overlayListModel.get(model.index).name
                             }
                         }
                     }
@@ -142,4 +156,5 @@ Rectangle {
             }
             }
         }
+
 }
