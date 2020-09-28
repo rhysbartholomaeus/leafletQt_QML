@@ -6,8 +6,6 @@ import CustomListModel 1.0
 
 Rectangle {
 
-    property var currentIndexItem
-
     signal overlayIdAdded(string id)
     onOverlayIdAdded: {
         CustomListModel.overlayListModel.append({name: id})
@@ -43,7 +41,6 @@ Rectangle {
                     anchors.fill: parent
                     onClicked: {
                         top.ListView.view.currentIndex = model.index;
-                        currentIndexItem = model.get(model.index);
                     }
                 }
             }
