@@ -62,9 +62,11 @@
 
     <script type="text/javascript" src="qrc:///html/resources/Leaflet.MovingMarker/MovingMarker.js"></script>
 
-    <!-- Test a moving aircraft -->
-
+    <!-- Javascript-based quadcopter -->
     <script type="text/javascript" src="qrc:///html/resources/leaflet.realtime/test_aircraft.js"></script>
+
+    <!-- establishes the webchannel to communicate with the QML application. -->
+    <script type="text/javascript" src="qrc:///html/resources/mapDisplayWebchannel.js"></script>
 
     </head>
     <body>
@@ -72,15 +74,21 @@
         <div id="map" style="height:100%; width:100%;position:absolute; border: 1px solid rgb(9, 89, 143)"></div>
 
         <script>
+            // Setup the Qwebchannel
+            initaliseWebchannel()
 
             var map = new L.Map('map', {center: new L.LatLng(-35.022638, 138.904095), zoom: 5});
 
             // Layer for overlays to sit on.
             var drawnItems = L.featureGroup().addTo(map);
+            // Allow global access - b a d  d e s i g n
+            window.overlayItemsLayer = drawnItems;
 
             var moveDrone = false;
 
             var createDrone = false;
+
+            var createSITLDrone = false;
 
             var moveSITLDrone = false;
 
@@ -91,8 +99,22 @@
 
             // layer for an Ardupilot SITL drone to sit on.
             var ardupilotLayer = L.featureGroup().addTo(map);
+            window.testAircraftLayer = ardupilotLayer;
                 
-            //initiateArdupilotQuery(ardupilotLayer, map)
+            // Used to indicate where a drone / other will transition to.
+            var sitlTargetPositionIcon = L.icon({
+                iconUrl: 'qrc:///html/resources/images/TargetIcon_Red.png',    
+                iconSize:     [16, 16], // size of the icon
+                iconAnchor:   [16, 16], // point of the icon which will correspond to marker's location
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+
+            var jsDroneTargetPositionIcon = L.icon({
+                iconUrl: 'qrc:///html/resources/images/PinMarker.png',    
+                iconSize:     [32, 32], // size of the icon
+                iconAnchor:   [16, 16], // point of the icon which will correspond to marker's location
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
 
             // Test function - can be called from C++ or from Javascript
             function centerMap(lat, lng) {
@@ -155,31 +177,53 @@
               
             // Inline function to provide ability to direct a drone - If it exists.
             // Sloppy way of doing this - markers should be per drone or similar - but proof-of-concept so YOLO
-            var dronePosMarker = null;
+            var sitlDroneMoveMarker = null;
+            var jsDroneMoveMarker = null;
+
             map.on('click', function(e) {
+                var location = e.latlng;
                 if(moveDrone) {
-                    var location = e.latlng;
-                    console.log('Going to location: ' + location);
-                    if(dronePosMarker != null){
-                        ardupilotLayer.removeLayer(dronePosMarker);
-                    }
-                    dronePosMarker = L.marker(location,{
-                        title: 'Drone moving here'
-                    }).addTo(ardupilotLayer);
+                    transition(location);
                     moveDrone = false;
-                    window.commObject.logStr('Drone moving to location: ' + location.lat + "," + location.lng);
+                    if(jsDroneMoveMarker != null){
+                        ardupilotLayer.removeLayer(jsDroneMoveMarker);
+                    }
+                    jsDroneMoveMarker = L.marker(location,{
+                        title: 'Drone moving here',
+                        icon: jsDroneTargetPositionIcon
+                    }).addTo(ardupilotLayer);
+                    moveSITLDrone = false;
                     if(location != undefined && location.lat != undefined && location.lng != undefined){
                         window.commObject.setDroneTargetPosition(location.lat,location.lng);
                     }
-                    transition(location);
+                }else if(moveSITLDrone){
+                    if(sitlDroneMoveMarker != null){
+                        ardupilotLayer.removeLayer(sitlDroneMoveMarker);
+                    }
+                    sitlDroneMoveMarker = L.marker(location,{
+                        title: 'Drone moving here',
+                        icon: sitlTargetPositionIcon
+                    }).addTo(ardupilotLayer);
+                    moveSITLDrone = false;
+                    if(location != undefined && location.lat != undefined && location.lng != undefined){
+                        window.commObject.setDroneTargetPosition(location.lat,location.lng);
+                    }
                 }
-                if(createDrone){
-                    initAircraft(ardupilotLayer,e.latlng);
+                // This creates a Javascript-controlled drone
+                else if(createDrone)
+                {
+                    initAircraft(ardupilotLayer,location);
+                    // Only one drone can be created at this stage.
+                    // Ideally there would be a datastructure to maintain different drones.
                     createDrone = false;
-                    //transition(e.latlng);
-                }   
-                
+                // Create the real simulated SITL drone.
+                }else if(createSITLDrone){
+                    window.commObject.startSITL(location.lat, location.lng);
+                    createSITLDrone = false;
+                }
+                     
             });
+            
         </script>
   </body>
 </html>
