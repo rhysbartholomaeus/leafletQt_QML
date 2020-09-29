@@ -23,7 +23,7 @@ Window {
         anchors.fill: parent
         anchors.margins: 5
         rows    : 12
-        columns : 12
+        columns : 14
         columnSpacing: 5
         property double colMulti : grid.width / grid.columns
         property double rowMulti : grid.height / grid.rows
@@ -38,7 +38,7 @@ Window {
         Rectangle {
             id: colsx
             color: "#212F3D"
-            Layout.rowSpan   : 3
+            Layout.rowSpan   : 4
             Layout.columnSpan: 3
             Layout.preferredWidth  : grid.prefWidth(this)
             Layout.preferredHeight : grid.prefHeight(this)
@@ -54,7 +54,7 @@ Window {
             //anchors.fill:parent
 
             Layout.rowSpan   : 12
-            Layout.columnSpan: 9
+            Layout.columnSpan: 11
             Layout.preferredWidth  : grid.prefWidth(this)
             Layout.preferredHeight : grid.prefHeight(this)
             ColumnLayout {
@@ -69,7 +69,7 @@ Window {
             }
             Connections {
                 target: sideBar
-                onStartSITL: mapDisplay.startSITL()
+                onStartSITL: mapDisplay.createSITLDroneSignal()
             }
             Connections {
                 target: sideBar
@@ -82,6 +82,10 @@ Window {
             Connections {
                 target: sideBar
                 onFollowRoute: mapDisplay.followRouteSignal(routeId)
+            }
+            Connections {
+                target: sideBar
+                onMoveSITLDrone: mapDisplay.moveSITLDroneSignal()
             }
         }
 
