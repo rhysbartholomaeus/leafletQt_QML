@@ -2,7 +2,7 @@
 
 var lat;
 var lon;
-var callsign;
+var callsign = 'TestDrone01';
 var position;
 var waypoints = [];
 var numWaypoints;
@@ -22,24 +22,17 @@ function initAircraft(layer, latlng){
         popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
     });
 
-    // Get the starting position and assign to the global variables.
-    callsign = "TAS";
-    //var waypoints = layer.getLayer(routeId)._latlngs;
-    //var aircraftMarker = L.Marker.movingMarker(waypoints,30000, {icon: planeIcon}).addTo(map);
     testDroneMarker = L.marker(latlng,{
-        title: 'TestDrone01',
+        title: callsign,
         icon: planeIcon
     }).addTo(layer);
     position = testDroneMarker.getLatLng();
-    // console.log(aircraftMarker);
-    // aircraftMarker.start();
 }
 
-function followRoute(layer,routeId){
-    var routeLayer = layer.getLayer(routeId);
-    console.log(routeLayer);
+function followRoute(routeId){
+    var routeLayer = window.overlayItemsLayer.getLayer(routeId);
     if (routeLayer instanceof L.Polyline) {
-        waypoints = layer.getLayer(routeId)._latlngs;
+        waypoints = routeLayer._latlngs;
         numWaypoints = waypoints.length
         // Kick off transition to first marker.
         transition(waypoints[0]);
