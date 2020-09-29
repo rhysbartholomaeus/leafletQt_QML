@@ -25,7 +25,11 @@ Item {
 
     signal moveDroneSignal()
 
+    signal moveSITLDroneSignal()
+
     signal createDroneSignal()
+
+    signal createSITLDroneSignal()
 
     signal followRouteSignal(string overlayId)
 
@@ -89,8 +93,9 @@ Item {
         });"
     }
 
-    function startSITL(){
-        var cmd = createGetRequest("http://127.0.0.1:5005/startSITL");
+    function startSITL(lat, lng){
+        var cmd = createGetRequest("http://127.0.0.1:5005/startSITL?lat="+lat+"&lng="+lng);
+        console.log('Using cmd:', cmd);
         webview.runJavaScript(cmd);
     }
 
@@ -117,6 +122,7 @@ Item {
         id: overlayTextEditor
         // Layer ID gleaned from the invoking Javascript call
         property var layerId
+
         modality: Qt.WindowModal
         title: "Edit layer " + layerId
 
@@ -159,5 +165,4 @@ Item {
         overlayTextEditor.layerId = layerId
         overlayTextEditor.open()
     }
-
 }
