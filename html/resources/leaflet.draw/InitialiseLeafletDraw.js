@@ -1,38 +1,4 @@
 function initialiseLeafletDraw(drawnItemsLayer, map){
-    
-    window.webChannel = new QWebChannel(qt.webChannelTransport, function(channel)
-    {
-        var qmlObj = channel.objects.qmlLeaflet;
-        window.commObject = qmlObj;
-        // Connect our QML object to the setOverlayText signal
-        commObject.setOverlayText.connect(function(layerId, titleText, descriptionText) {
-            if (typeof commObject !== 'undefined') {
-                console.log('Got signal for setOverlayText')
-                uiSetShapePropertiesCallback(drawnItemsLayer, layerId, titleText , descriptionText)
-            }
-        });
-        commObject.moveDroneSignal.connect(function() {
-            if (typeof commObject !== 'undefined') {
-                console.log('Moving drone enabled');
-                moveDrone = true;
-            }
-        });
-        commObject.createDroneSignal.connect(function() {
-            if (typeof commObject !== 'undefined') {
-                console.log('Creating drone');
-                createDrone = true;
-                alert('Select anywhere on map to place drone.');
-            }
-        });
-        commObject.followRouteSignal.connect(function(routeId) {
-            if (typeof commObject !== 'undefined') {
-                // Call the test_aircraft.js followRoute method
-                // Yes this is bad design - Sue me.
-                followRoute(drawnItemsLayer, routeId);
-            }
-        });
-    });
-
     // Object created - bind popup to layer, add to feature group
     map.on(L.Draw.Event.CREATED, function(event) {
         var layer = event.layer;
@@ -52,9 +18,9 @@ function initialiseLeafletDraw(drawnItemsLayer, map){
         }
         drawnItemsLayer.addLayer(layer);
         // Callback to the UI to add the layer to the overlay list
-        commObject.overlayAdded(layer._leaflet_id);
+        window.commObject.overlayAdded(layer._leaflet_id);
         // Callback to the UI to allow the user to modify the content
-        commObject.editPopupText(layer._leaflet_id);
+        window.commObject.editPopupText(layer._leaflet_id);
     });
 
     // Object(s) edited - update popups
@@ -66,7 +32,7 @@ function initialiseLeafletDraw(drawnItemsLayer, map){
             if (content !== null) {
                 layer.setPopupContent(content);
             }
-            commObject.editPopupText(layer._leaflet_id);
+            //window.commObject.editPopupText(layer._leaflet_id);
         });
     });
 
@@ -74,7 +40,7 @@ function initialiseLeafletDraw(drawnItemsLayer, map){
     map.on(L.Draw.Event.DELETED, function(event) {
         var layers = event.layers
         layers.eachLayer(function(layer){
-            commObject.overlayRemoved(layer._leaflet_id);
+            window.commObject.overlayRemoved(layer._leaflet_id);
         });
     });
 }
@@ -124,12 +90,12 @@ function getPopupContent(layer, displayText = "") {
     return null;
 };
 
-function uiSetShapePropertiesCallback(drawnItemsLayer, layerId, layerTitle, layerText){
+function uiSetShapePropertiesCallback(layerId, layerTitle, layerText){
     if(layerTitle == "") 
         layerTitle = "Undefined";
     if(layerText == "") 
         layerText = "No data";
-    var layer = drawnItemsLayer.getLayer(layerId);
+    var layer = window.overlayItemsLayer.getLayer(layerId);
     layer.feature.properties.title = layerTitle;
     layer.feature.properties.description = layerText;
     var content = getPopupContent(layer, layerTitle);
