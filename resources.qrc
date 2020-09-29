@@ -63,5 +63,9 @@
         <file>html/resources/leaflet.realtime/QueryOpenSkyNetworks.js</file>
         <file>SidebarButtons.qml</file>
         <file>CustomListModel.qml</file>
+        <file>html/resources/mapDisplayWebchannel.js</file>
+        <file>html/resources/images/TargetIcon_Red.png</file>
+        <file>html/resources/images/Bullseye_Green.png</file>
+        <file>html/resources/images/PinMarker.png</file>
     </qresource>
 </RCC>
