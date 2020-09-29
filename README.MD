@@ -31,6 +31,25 @@ To create an overlay, select an appropriate shape on the left hand side tool bar
 
 To delete a shape, select the trashcan icon and select the desired shape(s) for deletion. Once finished, click the _Save_ button to delete the overlay for good.
 
+### Using the Javascript Drone
+
+A test javascript drone has been built in that can be directed around the map. This is not an intelligent drone, it is merely a leaflet marker that can be moved around the map. 
+
+To use:
+1. Click on the 'Create Aircraft' button.
+2. Select anypoint on the map.
+3. The Drone icon will appear. 
+4. Click 'Move Drone' and select a location on the map. A red waypoint symbol will appear and the drone will slowly make its way there. 
+5. Optionally, create a polyline using the map drawing tools. 
+6. Select the 'Follow Route' option and click on the layer-id for the polyline (Yeah I know, IDs instead of the layer attribute you input...)
+7. The drone will follow the route. Be cautious how many times you click the 'Follow Route' option, since it will queue the commands for the drone, meaning that it may follow the target route many times over.
+
+**Note:** This drone is nowhere near realistic at all. The movement speed is based on two things:
+* The update rate for altering the position 
+* The 'speed' value for the aircraft.
+
+To ensure consistent timings between waypoint legs, the drone is set to move at a _speed_ of 15. This is an arbituary number and is not in an SI unit.
+
 ### Optional - GeoServer WMS
 
  Start GeoServer with a WMS service loaded. This provides an alternative map layer for viewing in the application.
@@ -46,6 +65,21 @@ This provides real-world ADS-B traffic from the free-to-use OpenSky Network syst
 You might be wondering why it is necessary to run a Python server to obtain the data? The leaflet.realtime library that facilitates live data overlays on the leaflet map layer expects GeoJSON-formatted data. Unfortunately, by default, the OpenSky Networks does not provide the output data in the expected format. 
 
 While possible to deal with this data conversion using Javascript locally, it requires implementing your own `async` functionality. Not that this is a hard process, it's just a lot easier to run the data through a secondary service that outputs the format the leaflet.realtime library expects. (Since leaflet.realtime already implements its own `async` functionality)
+
+### Optional - SITL Ardupilot Drone - **WIP**
+
+Functionality is limited, but users can instantiate a singular Ardupilot SITL Plane in a location of their choice, provided they have the flask server from [here](https://github.com/rhysbartholomaeus/ardupilot_flask) up and running. 
+
+Limited to creating the drone and setting an individual movement waypoint. The drone will move to the desired location and then return to its spawn location unless directed elsewhere.
+
+#### Usage
+
+1. Start the flask server using `flask run --port 5005`
+2. In the QML app, select 'Start SITL' and click anywhere on the map. This will spawn the drone on the ardupilot side, but GPS won't be active yet since it needs to calibrate. This takes between 10-20 seconds. 
+3. Click 'Setup SITL Drone' in the QML app. This kicks off the periodic GeoJSON query for the drone. A track marker will appear where you clicked previously to spawn the drone.
+4. Wait for the drone to take off. This is automatic. The drone will reach a 100m altitude and begin to orbit the spawn location.
+5. Click 'Move SITL Drone' and select a location on the map. The drone will begin to move towards the semi-transparent waypoint marker. Once it reaches the target, it'll default back to Return To Launch mode and return home. 
+
 
 ## GeoServer Setup
 
