@@ -60,11 +60,13 @@ To ensure consistent timings between waypoint legs, the drone is set to move at 
 
 If you reload the interior HTML page, you won't be able to create another drone. 
 
-
-
 ### Optional - GeoServer WMS
 
  Start GeoServer with a WMS service loaded. This provides an alternative map layer for viewing in the application.
+
+ The GIF below demonstrates the internet-sourced OpenStreetMaps, DarkMarble sourced from a local instance of GeoServer and a cascading WMS instance of the Mundialis OSM topography tiles from a local instance of GeoServer.
+
+ ![Map tile layers](./images/DifferentWMSLayers.gif)
 
 ### Optional - Flask OpenSky Network
 
