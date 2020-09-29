@@ -17,6 +17,8 @@ Rectangle {
 
     signal moveDrone()
 
+    signal moveSITLDrone()
+
     signal setupDrone()
 
     signal followRoute(string routeId)
@@ -38,7 +40,7 @@ Rectangle {
         id : grid
         anchors.fill: parent
         anchors.margins: 5
-        rows    : 3
+        rows    : 4
         columns : 2
         columnSpacing: 5
         property double colMulti : grid.width / grid.columns
@@ -49,7 +51,21 @@ Rectangle {
         function prefHeight(item){
             return rowMulti * item.Layout.rowSpan
         }
-
+        Rectangle{
+            id: jsDroneControlsLabels
+            color: "#5D6D7E"
+            Layout.rowSpan   : 1
+            Layout.columnSpan: 2
+            Layout.preferredWidth  : grid.prefWidth(this)
+            Layout.preferredHeight : 12
+            anchors.horizontalCenter: parent.verticalCenter
+            Label {
+                text: "JS Drone Controls"
+                color: "#F0F3F4"
+                font.pixelSize: 12
+                anchors.verticalCenter: jsDroneControlsLabels.verticalCenter
+            }
+        }
         // Button used to create a Moving Marker representing an aircraft following
         // a polyline.
         Button {
@@ -81,28 +97,52 @@ Rectangle {
                 moveDrone()
             }
         }
-        // Invokes the MapDisplay GET request
+        Rectangle{
+            id: sitlControlsLabel
+            color: "#5D6D7E"
+            Layout.rowSpan   : 1
+            Layout.columnSpan: 2
+            Layout.preferredWidth  : grid.prefWidth(this)
+            Layout.preferredHeight : 12
+
+            //anchors.horizontalCenter: parent.horizontalCenter
+            Label {
+                text: "SITL Controls"
+                color: "#F0F3F4"
+                font.pixelSize: 12
+                anchors.verticalCenter: sitlControlsLabel.verticalCenter
+            }
+        }
+        // Invokes MapDisplay to call the Python flask server to start the SITL process.
         Button {
             id: sitlBtn
             text: "Start SITL"
             onClicked: {
                 startSITL()
                 console.log("Sent starting SITL")
-                droneSetupBtn.enabled = true
-                sitlBtn.enabled = false
+                sitlDroneSetupBtn.enabled = true
+                this.enabled = false
             }
         }
         Button {
-            id: droneSetupBtn
-            text: "Setup Drone"
+            id: sitlDroneSetupBtn
+            text: "Setup SITL Drone"
             enabled: false
             onClicked: {
                 setupDrone()
                 console.log("set up drone")
                 // Ideally there would be a callback to wait until the drone is at
                 // a suitable height etc
-                droneSetupBtn.enabled = false
-                droneMoveBtn.enabled = true
+                this.enabled = false
+                sitlDroneMoveBtn.enabled = true
+            }
+        }
+        Button {
+            id: sitlDroneMoveBtn
+            text: "Move SITL Drone"
+            enabled: false
+            onClicked: {
+                moveSITLDrone()
             }
         }
     }
