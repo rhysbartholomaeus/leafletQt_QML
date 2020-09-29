@@ -37,18 +37,30 @@ A test javascript drone has been built in that can be directed around the map. T
 
 To use:
 1. Click on the 'Create Aircraft' button.
-2. Select anypoint on the map.
-3. The Drone icon will appear. 
-4. Click 'Move Drone' and select a location on the map. A red waypoint symbol will appear and the drone will slowly make its way there. 
-5. Optionally, create a polyline using the map drawing tools. 
-6. Select the 'Follow Route' option and click on the layer-id for the polyline (Yeah I know, IDs instead of the layer attribute you input...)
-7. The drone will follow the route. Be cautious how many times you click the 'Follow Route' option, since it will queue the commands for the drone, meaning that it may follow the target route many times over.
+2. Select any point on the map and the drone icon will appear. 
+3. Click 'Move Drone' and select a location on the map. A red waypoint symbol will appear and the drone will slowly make its way there. 
+4. Optionally, create a polyline using the map drawing tools. 
+5. Select the 'Follow Route' option and click on the layer-id for the polyline (Yeah I know, IDs instead of the layer attribute you input...)
+6. The drone will follow the route. Be cautious how many times you click the 'Follow Route' option, since it will queue the commands for the drone, meaning that it may follow the target route many times over.
+
+
+Go-to-location movement:
+
+![Javascript drone movement](./images/droneMovementAnimation.gif)
+
+Follow route movement:
+
+![Javascript drone movement](./images/droneRouteAnimation.gif)
 
 **Note:** This drone is nowhere near realistic at all. The movement speed is based on two things:
 * The update rate for altering the position 
 * The 'speed' value for the aircraft.
 
 To ensure consistent timings between waypoint legs, the drone is set to move at a _speed_ of 15. This is an arbituary number and is not in an SI unit.
+
+If you reload the interior HTML page, you won't be able to create another drone. 
+
+
 
 ### Optional - GeoServer WMS
 
@@ -364,7 +376,11 @@ Below is a custom icon attached to a moving marker, following the designated rou
 
 #### Using a controllable data soruce - ArduPilot
 
-I also trialled attaching an Ardupilot Software in the Loop simulated drone and the Python DroneKit library to the Leaflet marker display. This was a separate flask server that allows a user to spin up a Ardupilot drone and retrieve it's position. Commands were going to be added to allow the user to manually direct the drone around the map (using the go-to-location MAVProxy commands), however this has not been fully implemented at this stage. 
+I also trialled attaching an Ardupilot Software in the Loop simulated drone and the Python DroneKit library to the Leaflet marker display. This was a separate flask server that allows a user to spin up a Ardupilot drone and retrieve it's position. Commands were going to be added to allow the user to manually direct the drone around the map.
+
+![SITL Drone](./images/SITLDrone.png)
+
+Currently it is possible to instantiate a SITL Drone and direct it to a location.
 
 ### Leaflet Track Marker
 
