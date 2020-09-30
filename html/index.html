@@ -192,10 +192,6 @@
                         title: 'Drone moving here',
                         icon: jsDroneTargetPositionIcon
                     }).addTo(ardupilotLayer);
-                    moveSITLDrone = false;
-                    if(location != undefined && location.lat != undefined && location.lng != undefined){
-                        window.commObject.setDroneTargetPosition(location.lat,location.lng);
-                    }
                 }else if(moveSITLDrone){
                     if(sitlDroneMoveMarker != null){
                         ardupilotLayer.removeLayer(sitlDroneMoveMarker);
