@@ -2,6 +2,8 @@
 
 This project is a demonstration showcasing the packaging of the Javascript mapping framework [Leaflet](https://leafletjs.com/) into a QML/Qt application.
 
+This is by no means a production-quality application, it is merely a kitbash of different Leaflet features to demonstrate what is possible with the framework.
+
 ![QML test application](./images/overview.png)
 
 I've also got a C++ implementation here: https://github.com/rhysbartholomaeus/leafletQt_CPP
@@ -10,10 +12,14 @@ I've also got a C++ implementation here: https://github.com/rhysbartholomaeus/le
 ## Requirements
 
 * Built on Qt 5.12.9 MSVC 2017 64 Bit
+
+If you want to have more than one layer style available:
 * Java 8 or 11 JRE - Optional
-* [GeoServer](http://geoserver.org/) (Tested with version 2.17.2) - Optional - Requires Java
-* Python (Tested on 3.8.5) - Optional
-* Python Flask & Flask CORS - Optional
+* [GeoServer](http://geoserver.org/) (Tested with version 2.17.2) 
+
+If you want to display ADS-B traffic on the map:
+* Python (Tested on 3.8.5)
+* Python Flask & Flask CORS
 
 ## Build 
 
@@ -25,7 +31,7 @@ Open the .PRO file in Qt Creator and build and run the project as per usual for 
 
 Start the application in Qt Creator. The default map will load using the internet-provided OpenStreetMaps tile server.
 
-As part of mapping verification, the map has also been coded to accept a WMS service offered by a local instance of GeoServer. Refer to the **GeoServer Setup** section for advice. 
+The map has been setup to accept two WMS sources offered by a local instance of GeoServer. Refer to the **GeoServer Setup** section for advice. The application will still function if GeoServer is not present, however the two additional overlays present in the top right-hand corner of the application will be unavailable.
 
 To create an overlay, select an appropriate shape on the left hand side tool bar and draw on the map. The unique Leaflet ID for the shape will appear in the 'Overlays' column on the left of the application. 
 
@@ -33,16 +39,15 @@ To delete a shape, select the trashcan icon and select the desired shape(s) for 
 
 ### Using the Javascript Drone
 
-A test javascript drone has been built in that can be directed around the map. This is not an intelligent drone, it is merely a leaflet marker that can be moved around the map. 
+A Javascript drone has been built in that can be directed around the map. Note that this is not an accurate depiction of a drone by any means, it is merely a leaflet marker that can be moved around the map. 
 
 To use:
 1. Click on the 'Create Aircraft' button.
 2. Select any point on the map and the drone icon will appear. 
 3. Click 'Move Drone' and select a location on the map. A red waypoint symbol will appear and the drone will slowly make its way there. 
 4. Optionally, create a polyline using the map drawing tools. 
-5. Select the 'Follow Route' option and click on the layer-id for the polyline (Yeah I know, IDs instead of the layer attribute you input...)
+5. Select the 'Follow Route' option and click on the layer-id for the polyline. 
 6. The drone will follow the route. Be cautious how many times you click the 'Follow Route' option, since it will queue the commands for the drone, meaning that it may follow the target route many times over.
-
 
 Go-to-location movement:
 
@@ -56,7 +61,7 @@ Follow route movement:
 * The update rate for altering the position 
 * The 'speed' value for the aircraft.
 
-To ensure consistent timings between waypoint legs, the drone is set to move at a _speed_ of 15. This is an arbituary number and is not in an SI unit.
+To provide more consistent timings between waypoint legs, the drone is set to move at a _speed_ of 15. This is an arbituary number and is not an SI unit.
 
 If you reload the interior HTML page, you won't be able to create another drone. 
 
@@ -362,7 +367,7 @@ L.realtime({
 ```
 In this example, `httpGet` was a test function which queried the URL, performed the necessary JSON to GeoJSON conversion of the data and returned the response. The realtime `success` function then takes in the data and projects this onto the map for each of the feature objects present in the GeoJSON feature set. 
 
-The function is expected to return straight away, so if performing a fetch, it is necessary to write you're own asynchronous logic to handle the delayed promise return. As such, it was just as simple to use a Python server to handle this. 
+The function is expected to return straight away, so if performing a fetch, it is necessary to write your own asynchronous logic to handle the delayed promise return. As such, it was just as simple to use a Python server to handle this. 
 
 ### Leaflet Moving Marker
  
