@@ -138,10 +138,8 @@
             var tileLayers = {
                 "Topographic OSM": wmsLayer,
                 "Dark Marble": darkmarble,
-                "Open Street Map": osm
+                "Open Street Map": osm.addTo(map)
             }
-
-            osm.addTo(map);
 
             L.control.layers(
                 tileLayers  

@@ -175,14 +175,20 @@ The following steps were taken to establish a WMS service for Leaflet to consume
 ```
     var darkmarble = L.tileLayer.wms('http://localhost:8080/geoserver/map_server/wms?', {
         layers: 'BlackMarble_2016_D2_geo'
-    }).addTo(map);
+    });
 ```
 Don't forget to add a control as well:
 ```
+
+    // Only add a single layer to the map, otherwise all will draw simultaneously.
+    var tileLayers = {
+        "Topographic OSM": wmsLayer,
+        "Dark Marble": darkmarble,
+        "Open Street Map": osm.addTo(map)
+    }
+
     L.control.layers({
-            "wmsLayer": wmsLayer.addTo(map),
-            "osmLayer": osm.addTo(map),
-            "darkmarble": darkmarble.addTo(map)
+        tileLayers
         }).addTo(map);
 ```
 
