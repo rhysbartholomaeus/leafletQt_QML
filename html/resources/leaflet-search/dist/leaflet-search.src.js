@@ -1,3 +1,19 @@
+/* 
+ * Leaflet Control Search v2.9.7 - 2019-01-14 
+ * 
+ * Copyright 2019 Stefano Cudini 
+ * stefano.cudini@gmail.com 
+ * http://labs.easyblog.it/ 
+ * 
+ * Licensed under the MIT license. 
+ * 
+ * Demo: 
+ * http://labs.easyblog.it/maps/leaflet-search/ 
+ * 
+ * Source: 
+ * git@github.com:stefanocudini/leaflet-search.git 
+ * 
+ */
 /*
 	Name					Data passed			   Description
 
@@ -582,6 +598,7 @@ L.Control.Search = L.Control.extend({
     }
     else if(layer.hasOwnProperty('feature'))//GeoJSON
     {
+		console	
       if(layer.feature.properties.hasOwnProperty(propName))
       {
         if(layer.getLatLng && typeof layer.getLatLng === 'function') {
@@ -606,7 +623,14 @@ L.Control.Search = L.Control.extend({
       layer.eachLayer(function (layer) {
         self._searchInLayer(layer, retRecords, propName);
       });
-    }
+	}
+	// WARNING - This requires Leaflet.Realtime to be included in the project
+	// There should be some sort of error checking or similar to verify the layer instance type
+	// is available for comparison
+	else if(layer instanceof L.Realtime)
+    {
+	   self._searchInLayer(layer._container, retRecords, propName);
+	}
   },
 	
 	_recordsFromLayer: function() {	//return table: key,value from layer
