@@ -64,6 +64,10 @@
     <!-- establishes the webchannel to communicate with the QML application. -->
     <script type="text/javascript" src="qrc:///html/resources/mapDisplayWebchannel.js"></script>
 
+    <!-- Leaflet feature group search -->
+    <link rel="stylesheet" href="qrc:///html/resources/leaflet-search/dist/leaflet-search.src.css"/>
+    <script type="text/javascript" src="qrc:///html/resources/leaflet-search/dist/leaflet-search.src.js"></script>
+    
     </head>
     <body>
         
@@ -73,7 +77,7 @@
             // Setup the Qwebchannel
             initaliseWebchannel()
 
-            var map = new L.Map('map', {center: new L.LatLng(-35.022638, 138.904095), zoom: 5});
+            const map = new L.Map('map', {center: new L.LatLng(-35.022638, 138.904095), zoom: 5});
 
             // Layer for overlays to sit on.
             var drawnItems = L.featureGroup().addTo(map);
@@ -89,9 +93,7 @@
             var moveSITLDrone = false;
 
             // layer for ADS-B tracks to sit on.
-            var trackLayer = L.featureGroup()
-            .on('click', function(){alert("Got click on Plane.");})
-            .addTo(map);
+            var trackLayer = L.featureGroup().addTo(map);
 
             // layer for an Ardupilot SITL drone to sit on.
             var ardupilotLayer = L.featureGroup().addTo(map);
@@ -221,7 +223,37 @@
                 }
                      
             });
-            
+
+            // ADS-B search box
+            var adsbSearchBox = new L.Control.Search({
+                //position:'bottomleft',
+                layer: trackLayer,
+                propertyName: 'callsign',
+                propertyLoc: 'coordinates',
+                marker: false,
+                initial: false, 
+                moveToLocation: function(latlng, title, map) {
+                    // For now, we won't force a zoom in - use the current map value
+                    map.setView(latlng, map.getZoom());
+                }
+            });
+
+            // Create a temporary circle that lasts for 7.5 seconds around the target
+            adsbSearchBox.on('search:locationfound', function(e) {
+                console.log(e);
+                var circle = L.circleMarker(e.latlng, {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.15,
+                    radius: 12
+                }).addTo(map);
+                setTimeout(function(){
+                    map.removeLayer(circle);
+                    }, 7500);
+            });
+
+            map.addControl(adsbSearchBox);
+
         </script>
   </body>
 </html>

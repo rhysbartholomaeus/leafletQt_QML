@@ -66,5 +66,10 @@
         <file>html/resources/images/TargetIcon_Red.png</file>
         <file>html/resources/images/Bullseye_Green.png</file>
         <file>html/resources/images/PinMarker.png</file>
+        <file>html/resources/leaflet.mouseCoordinate/src/leaflet.mouseCoordinate.css</file>
+        <file>html/resources/leaflet.mouseCoordinate/src/leaflet.mouseCoordinate.js</file>
+        <file>html/resources/leaflet-search/dist/leaflet-search.src.css</file>
+        <file>html/resources/leaflet-search/dist/leaflet-search.src.js</file>
+        <file>html/resources/leaflet-search/dist/images/search-icon.png</file>
     </qresource>
 </RCC>
