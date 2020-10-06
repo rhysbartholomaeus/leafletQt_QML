@@ -51,7 +51,7 @@
         this.getLayer(id)._heading = feature.properties['true_track']; // Using heading causes the symbol to freak out
         this.getLayer(id)._course = feature.properties['true_track']; 
         this.getLayer(id)._speed = feature.properties['velocity'];
-          this.getLayer(id).bindTooltip(   '<b>'+ feature.properties['callsign'] 
+          this.getLayer(id).bindTooltip('<b>'+ feature.properties['callsign'] 
           +'</b><br>Heading: ' + feature.properties['true_track'] +' Degrees <br>' 
           +'</b><br>Altitude: '+ feature.properties['geo_altitude'] +' m <br>' 
           + 'Speed: ' + feature.properties['velocity'] + ' m/s',
