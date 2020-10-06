@@ -68,6 +68,10 @@
     <link rel="stylesheet" href="qrc:///html/resources/leaflet-search/dist/leaflet-search.src.css"/>
     <script type="text/javascript" src="qrc:///html/resources/leaflet-search/dist/leaflet-search.src.js"></script>
     
+    <!-- Leaflet mouse coordinates  -->
+    <link rel="stylesheet" href="qrc:///html/resources/leaflet.mouseCoordinate/dist/leaflet.mousecoordinate.css"/>
+    <script type="text/javascript" src="qrc:///html/resources/leaflet.mouseCoordinate/dist/leaflet.mousecoordinate.js"></script>
+
     </head>
     <body>
         
@@ -251,6 +255,9 @@
             });
 
             map.addControl(adsbSearchBox);
+
+            // Display the GPS + UTMREF(MGRS) coordinates in the bottom left of the map display.
+            L.control.mouseCoordinate({gpsLong:false,utmref:true, position: 'bottomleft'}).addTo(map);
 
         </script>
   </body>
