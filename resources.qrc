@@ -51,7 +51,6 @@
         <file>html/resources/leaflet.draw/Leaflet.draw.js</file>
         <file>html/resources/leaflet.draw/Toolbar.js</file>
         <file>html/resources/leaflet.draw/Tooltip.js</file>
-        <file>html/resources/Leaflet.MovingMarker/MovingMarker.js</file>
         <file>html/resources/leaflet.realtime/L.Realtime.js</file>
         <file>html/resources/leaflet.realtime/test_aircraft.js</file>
         <file>html/resources/leaflet.tracksymbol/leaflet-tracklayer.js</file>
