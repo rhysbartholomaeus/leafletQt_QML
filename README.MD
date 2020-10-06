@@ -85,6 +85,20 @@ You might be wondering why it is necessary to run a Python server to obtain the 
 
 While possible to deal with this data conversion using Javascript locally, it requires implementing your own `async` functionality. Not that this is a hard process, it's just a lot easier to run the data through a secondary service that outputs the format the leaflet.realtime library expects. (Since leaflet.realtime already implements its own `async` functionality)
 
+Recently added Leaflet-Search to provide the ability to look for aircraft based in on their callsign. **WARNING:** This required modifying `html/resources/leaflet-search/src/leaflet-search.js` by adding the following to lines 627-633:
+
+```
+	// WARNING - This requires Leaflet.Realtime to be included in the project
+	// There should be some sort of error checking or similar to verify the layer instance type
+	// is available for comparison
+	else if(layer instanceof L.Realtime)
+    {
+	   self._searchInLayer(layer._container, retRecords, propName);
+	}
+```
+
+This is required as a Leaflet.Realtime layer embeds the FeatureGroup within the `_container` property, which ordinarily would be inaccessible to the Leaflet-Search plugin.
+ 
 ### Optional - SITL Ardupilot Drone - **WIP**
 
 Functionality is limited, but users can instantiate a singular Ardupilot SITL Plane in a location of their choice, provided they have the flask server from [here](https://github.com/rhysbartholomaeus/ardupilot_flask) up and running. 
