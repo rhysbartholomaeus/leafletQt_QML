@@ -68,5 +68,7 @@
         <file>html/resources/leaflet-search/dist/leaflet-search.src.css</file>
         <file>html/resources/leaflet-search/dist/leaflet-search.src.js</file>
         <file>html/resources/leaflet-search/dist/images/search-icon.png</file>
+        <file>html/resources/leaflet.mouseCoordinate/dist/leaflet.mousecoordinate.css</file>
+        <file>html/resources/leaflet.mouseCoordinate/dist/leaflet.mousecoordinate.js</file>
     </qresource>
 </RCC>
