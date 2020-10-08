@@ -33,7 +33,7 @@ Rectangle {
 
             // If no id present but we have a route to choose from, default to it.
             if(CustomListModel.overlayListModel.count > 0){
-                var defaultId = CustomListModel.overlayListModel.get(0)['']
+                var defaultId = CustomListModel.overlayListModel.get(0)['name']
                 followRoute(defaultId)
             }
         }
