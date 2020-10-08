@@ -102,6 +102,7 @@
             // layer for an Ardupilot SITL drone to sit on.
             var ardupilotLayer = L.featureGroup().addTo(map);
             window.testAircraftLayer = ardupilotLayer;
+            
                 
             // Used to indicate where a drone / other will transition to.
             var sitlTargetPositionIcon = L.icon({
@@ -138,11 +139,18 @@
             var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             })
-            
+
+            var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 19
+            });
+
             var tileLayers = {
                 "Topographic OSM": wmsLayer,
                 "Dark Marble": darkmarble,
-                "Open Street Map": osm.addTo(map)
+                "Open Street Map": osm.addTo(map),
+                "Dark Matter": CartoDB_DarkMatter
             }
 
             L.control.layers(
@@ -173,13 +181,6 @@
 
             // Placeholder to select drone
             var selectedDrone = false;
-
-            // On click - drone selected
-            trackLayer.on('click', function (event) {
-                var clickedMarker = event.layer;
-                // selectedDrone = true;
-                console.log('Clicked on plane.' + clickedMarker);
-            });
               
             // Inline function to provide ability to direct a drone - If it exists.
             // Sloppy way of doing this - markers should be per drone or similar - but proof-of-concept so YOLO
