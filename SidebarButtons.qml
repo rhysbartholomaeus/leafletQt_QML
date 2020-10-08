@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.2
 import QtQuick.Window 2.0
@@ -8,6 +8,9 @@ import QtQml 2.12
 import CustomListModel 1.0
 
 Rectangle {
+
+    color: "#26314c"
+    radius: 5
 
     property var currentlySelectedValue
 
@@ -24,10 +27,13 @@ Rectangle {
     signal followRoute(string routeId)
 
     function emitFollowRouteSignal(routeId){
+        console.log('Emit route ')
+        console.log('Using route: ' + routeId)
         if(routeId === undefined){
+
             // If no id present but we have a route to choose from, default to it.
             if(CustomListModel.overlayListModel.count > 0){
-                var defaultId = CustomListModel.overlayListModel.get(0).name
+                var defaultId = CustomListModel.overlayListModel.get(0)['']
                 followRoute(defaultId)
             }
         }
@@ -51,43 +57,51 @@ Rectangle {
         function prefHeight(item){
             return rowMulti * item.Layout.rowSpan
         }
+
         Rectangle{
             id: jsDroneControlsLabels
-            color: "#5D6D7E"
+            color: "#202941"
             Layout.rowSpan   : 1
             Layout.columnSpan: 2
             Layout.preferredWidth  : grid.prefWidth(this)
-            Layout.preferredHeight : 12
-            anchors.horizontalCenter: parent.verticalCenter
+            Layout.preferredHeight : 20
+            radius: 5
             Label {
                 text: "JS Drone Controls"
                 color: "#F0F3F4"
                 font.pixelSize: 12
-                anchors.verticalCenter: jsDroneControlsLabels.verticalCenter
+                anchors.centerIn: parent
             }
         }
         // Button used to create a Moving Marker representing an aircraft following
         // a polyline.
-        Button {
+        RoundButton {
             text: "Create Aircraft"
             onClicked: {
                 createAircraft()
                 followRouteBtn.enabled = true
                 droneMoveBtn.enabled = true
                 this.enabled = false
-            }//routeSelectionDialog.open()
+            }
+            Layout.fillWidth: true
+            Layout.preferredWidth  : grid.prefWidth(this)
+            radius: 5
         }
-        Button {
+
+        RoundButton {
             id: followRouteBtn
             text: "Follow Route"
             enabled: false
             onClicked: {
-                // Fire signal to be picked up by MapDisplay which interacts
-                // with the HTML
                 routeSelectionDialog.open()
             }
+            Layout.preferredWidth  : grid.prefWidth(this)
+            Layout.fillWidth: true
+            radius: 5
+
         }
-        Button {
+
+        RoundButton {
             id: droneMoveBtn
             text: "Move Drone"
             enabled: false
@@ -96,54 +110,65 @@ Rectangle {
                 // with the HTML
                 moveDrone()
             }
+            Layout.fillWidth: true
+            Layout.preferredWidth  : grid.prefWidth(this)
+            radius: 5
         }
+
+        // SITL Controls label
         Rectangle{
             id: sitlControlsLabel
-            color: "#5D6D7E"
+            color: "#202941"
             Layout.rowSpan   : 1
             Layout.columnSpan: 2
             Layout.preferredWidth  : grid.prefWidth(this)
-            Layout.preferredHeight : 12
-
-            //anchors.horizontalCenter: parent.horizontalCenter
+            Layout.preferredHeight : 20
+            radius: 5
             Label {
                 text: "SITL Controls"
                 color: "#F0F3F4"
                 font.pixelSize: 12
-                anchors.verticalCenter: sitlControlsLabel.verticalCenter
+                anchors.centerIn: parent
             }
         }
+
         // Invokes MapDisplay to call the Python flask server to start the SITL process.
-        Button {
+        RoundButton {
             id: sitlBtn
             text: "Start SITL"
             onClicked: {
                 startSITL()
-                console.log("Sent starting SITL")
                 sitlDroneSetupBtn.enabled = true
                 this.enabled = false
             }
+            Layout.fillWidth: true
+            radius: 5
         }
-        Button {
+
+        RoundButton {
             id: sitlDroneSetupBtn
             text: "Setup SITL Drone"
             enabled: false
             onClicked: {
                 setupDrone()
-                console.log("set up drone")
                 // Ideally there would be a callback to wait until the drone is at
                 // a suitable height etc
                 this.enabled = false
                 sitlDroneMoveBtn.enabled = true
             }
+            Layout.fillWidth: true
+            radius: 5
         }
-        Button {
+
+        RoundButton {
             id: sitlDroneMoveBtn
             text: "Move SITL Drone"
             enabled: false
             onClicked: {
                 moveSITLDrone()
             }
+            Layout.fillWidth: true
+            radius: 5
         }
     }
 
@@ -151,50 +176,61 @@ Rectangle {
         id: routeSelectionDialog
         modality: Qt.WindowModal
         title: "Select a route for aircraft to follow:"
-        onButtonClicked: {
-            emitFollowRouteSignal(currentlySelectedValue);
+        onAccepted: {
+            emitFollowRouteSignal(dialogOverlayList.selectedValue)
+            this.close()
         }
-
-        Rectangle{
-            anchors.margins: 5
-            implicitWidth: 300
-            implicitHeight: 200
-
-            // This is dumb - Why can't you just initalise another OverlayList object?
-            //OverlayList{}
-
-            Component {
-                id: overlayNameDelegate
-                Rectangle {
-                    id: top
-                    color: ListView.isCurrentItem ? "#F5B041" : "transparent"
-                    height: text.implicitHeight
-                    anchors { left: parent.left; right: parent.right }
-                    Text {
-                        anchors.fill: parent
-                        id: text
-                        text: model.name
-                        color: parent.ListView.isCurrentItem ? "white" : "black"
-                        font.pixelSize: 24
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                top.ListView.view.currentIndex = model.index;
-                                currentlySelectedValue = CustomListModel.overlayListModel.get(model.index).name
-                            }
+        onRejected:{
+            this.close()
+        }
+        contentItem:
+            Rectangle{
+                //anchors.fill: parent
+                anchors.margins: 5
+                color: "#0f1524"
+                implicitWidth: 250
+                implicitHeight: 310
+                GridLayout{
+                    anchors.fill: parent
+                    anchors.margins: 5
+                    rows    : 2
+                    columns : 2
+                    columnSpacing: 5
+                    OverlayList{
+                        id: dialogOverlayList
+                        Layout.fillWidth: true
+                        //Layout.fillHeight: true
+                        Layout.row: 0
+                        Layout.columnSpan: 2
+                        Layout.preferredHeight: 250
+                        Layout.preferredWidth: 250
+                        radius: 5
+                        color: "#26314c"
+                    }
+                    RoundButton {
+                        id: okBtn
+                        text: "OK"
+                        Layout.row: 1
+                        Layout.column: 0
+                        Layout.fillWidth: true
+                        onClicked: {
+                            routeSelectionDialog.accepted()
                         }
+                        radius: 5
+                    }
+                    RoundButton {
+                        id: cancelBtn
+                        text: "Cancel"
+                        onClicked: {
+                            routeSelectionDialog.rejected()
+                        }
+                        //Layout.fillWidth: true
+                        Layout.row: 1
+                        Layout.column: 1
+                        Layout.fillWidth: true
+                        radius: 5
                     }
                 }
             }
-
-            ListView {
-                id: primaryListView
-                anchors.fill: parent
-                model: CustomListModel.overlayListModel
-                delegate: overlayNameDelegate
-                clip: true
-            }
-            }
         }
-
 }

@@ -6,6 +6,8 @@ import CustomListModel 1.0
 
 Rectangle {
 
+    property var selectedValue
+
     signal overlayIdAdded(string id)
     onOverlayIdAdded: {
         CustomListModel.overlayListModel.append({name: id})
@@ -28,9 +30,10 @@ Rectangle {
         id: overlayNameDelegate
         Rectangle {
             id: top
-            color: ListView.isCurrentItem ? "#F5B041" : "transparent"
+            color: ListView.isCurrentItem ? "#e12e00" : "transparent"
             height: text.implicitHeight
             anchors { left: parent.left; right: parent.right }
+            radius: 2.5
             Text {
                 anchors.fill: parent
                 id: text
@@ -41,6 +44,7 @@ Rectangle {
                     anchors.fill: parent
                     onClicked: {
                         top.ListView.view.currentIndex = model.index;
+                        selectedValue = CustomListModel.overlayListModel.get(model.index)["name"];
                     }
                 }
             }
