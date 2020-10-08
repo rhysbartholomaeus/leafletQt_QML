@@ -58,6 +58,7 @@ Item {
     }
 
     WebEngineView {
+        backgroundColor: '#161d31'
         id: webview
         url: "qrc:/html/index.html"
         anchors.fill: parent
@@ -118,6 +119,7 @@ Item {
         webview.runJavaScript(cmd);
     }
 
+    // Overlay ID dialog
     Dialog{
         id: overlayTextEditor
         // Layer ID gleaned from the invoking Javascript call
@@ -127,10 +129,10 @@ Item {
         title: "Edit layer " + layerId
 
         contentItem: Rectangle{
-            color: "#2C3E50"
+            color: "#161d31"
             anchors.margins: 5
             implicitWidth: overlayTitle.width + 10
-            //implicitHeight: grid.grid.height
+            implicitHeight: (overlayTitle.height +overlayDescription.height + setOverlayProperties.height) + 20
             GridLayout {
                 id : grid
                 anchors.fill: parent
@@ -144,10 +146,11 @@ Item {
                 TextField{
                    id: overlayDescription
                    placeholderText: qsTr("Enter overlay description")
+                   //Layout.preferredHeight: 100
                 }
                 Button{
-                    anchors.verticalCenter: parent
                     id: setOverlayProperties
+                    Layout.fillWidth: true
                     text: "Ok"
                     onClicked:{
                             // Emit the signal for capture on the javascript side
