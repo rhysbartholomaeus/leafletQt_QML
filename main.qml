@@ -7,17 +7,17 @@ import QtQml 2.12
 
 Window {
     width: 1024
-    height: 750
+    height: 760
     visible: true
     title: qsTr("Map Display")
 
     // Background
     Rectangle {
         anchors.fill: parent
-        color: "#2C3E50"
+        color: "#161d31"
     }
 
-    // Primary content
+    // Primary content layout
     GridLayout {
         id : grid
         anchors.fill: parent
@@ -36,22 +36,85 @@ Window {
 
         // Side panel
         Rectangle {
-            id: colsx
-            color: "#212F3D"
-            Layout.rowSpan   : 4
+            id: sidePanel
+            color: "transparent"
+            Layout.rowSpan   : 12
             Layout.columnSpan: 3
             Layout.preferredWidth  : grid.prefWidth(this)
             Layout.preferredHeight : grid.prefHeight(this)
+            radius: 5
 
-            SidebarButtons{
-                id: sideBar
+            GridLayout {
+                id : sidebarGrid
+                rows    : 5
+                columns : 1
+                anchors.fill: parent
+                anchors.margins: 5
+
+                // Controls label
+                Rectangle{
+                    id: controlsLabel
+                    color: "#202941"
+                    Layout.preferredHeight: 25
+                    Layout.fillWidth: true
+                    radius: 5
+
+                    Label {
+                        text: "Controls"
+                        color: "#F0F3F4"
+                        font.pixelSize: 18
+                        anchors.centerIn: parent
+                    }
+                }
+
+                SidebarButtons{
+                    id: sideBar
+                    Layout.preferredHeight: 250
+                    Layout.fillWidth: true
+                }
+
+                // Overlay list label
+                Rectangle{
+                    id: overlayLabel
+                    color: "#202941"
+                    //Layout.fillHeight: true
+                    Layout.preferredHeight: 25
+                    Layout.fillWidth: true
+                    radius: 5
+
+                    Label {
+                        text: "Overlays"
+                        color: "#F0F3F4"
+                        font.pixelSize: 18
+                        anchors.centerIn: parent
+                    }
+                }
+
+                OverlayList{
+                    id: overlayList
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    radius: 5
+                    color: "#26314c"
+                    Connections {
+                        target: mapDisplay
+                        onGotShapeId: overlayList.overlayIdAdded(id)
+                    }
+                    Connections {
+                        target: mapDisplay
+                        onRemovedOverlayId: overlayList.overlayIdRemoved(id)
+                    }
+                    Connections {
+                        target: mapDisplay
+                        onMapLoad: overlayList.clearOverlayIds()
+                    }
+                }
             }
        }
 
         // Main map display
         MapDisplay{
             id: mapDisplay
-            //anchors.fill:parent
 
             Layout.rowSpan   : 12
             Layout.columnSpan: 11
@@ -62,7 +125,6 @@ Window {
                 //width: parent.width
                 anchors.centerIn: parent
             }
-
             Connections {
                 target: sideBar
                 onCreateAircraft: mapDisplay.initAircraft() //(routeId)
@@ -86,58 +148,6 @@ Window {
             Connections {
                 target: sideBar
                 onMoveSITLDrone: mapDisplay.moveSITLDroneSignal()
-            }
-        }
-
-        Rectangle{
-            id: overlayLabel
-            color: "#5D6D7E"
-            Layout.rowSpan   : 1
-            Layout.columnSpan: 3
-            Layout.preferredWidth  : grid.prefWidth(this)
-            Layout.preferredHeight : 25
-            Label {
-                text: "Overlays"
-                color: "#F0F3F4"
-                font.pixelSize: 18
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-        }
-
-        OverlayList{
-            id: overlayList
-            Layout.rowSpan   : 3
-            Layout.columnSpan: 3
-            Layout.preferredWidth  : grid.prefWidth(this)
-            Layout.preferredHeight : grid.prefHeight(this)
-            Connections {
-                target: mapDisplay
-                onGotShapeId: overlayList.overlayIdAdded(id)
-            }
-            Connections {
-                target: mapDisplay
-                onRemovedOverlayId: overlayList.overlayIdRemoved(id)
-            }
-            Connections {
-                target: mapDisplay
-                onMapLoad: overlayList.clearOverlayIds()
-            }
-        }
-
-        Rectangle{
-            id: routeLabel
-            color: "#5D6D7E"
-            Layout.rowSpan   : 1
-            Layout.columnSpan: 3
-            Layout.preferredWidth  : grid.prefWidth(this)
-            Layout.preferredHeight : 25
-            Label {
-                text: "Routes"
-                color: "#F0F3F4"
-                font.pixelSize: 18
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
             }
         }
     }
