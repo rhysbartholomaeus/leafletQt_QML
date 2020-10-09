@@ -24,7 +24,7 @@ Window {
         anchors.margins: 5
         rows    : 12
         columns : 14
-        columnSpacing: 5
+        columnSpacing: 2.5
         property double colMulti : grid.width / grid.columns
         property double rowMulti : grid.height / grid.rows
         function prefWidth(item){
@@ -62,7 +62,7 @@ Window {
                     Label {
                         text: "Controls"
                         color: "#F0F3F4"
-                        font.pixelSize: 18
+                        font.pixelSize: 14
                         anchors.centerIn: parent
                     }
                 }
@@ -85,7 +85,7 @@ Window {
                     Label {
                         text: "Overlays"
                         color: "#F0F3F4"
-                        font.pixelSize: 18
+                        font.pixelSize: 14
                         anchors.centerIn: parent
                     }
                 }
@@ -122,7 +122,6 @@ Window {
             Layout.preferredHeight : grid.prefHeight(this)
             ColumnLayout {
                 anchors.fill: parent
-                //width: parent.width
                 anchors.centerIn: parent
             }
             Connections {
