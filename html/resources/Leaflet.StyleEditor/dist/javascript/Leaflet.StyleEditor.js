@@ -810,8 +810,7 @@ function setupGeometryForm() {
         'weight': L.StyleEditor.formElements.WeightElement,
         'dashArray': L.StyleEditor.formElements.DashElement,
         'fillColor': L.StyleEditor.formElements.ColorElement,
-        'fillOpacity': L.StyleEditor.formElements.OpacityElement,
-        'popupContent': L.StyleEditor.formElements.PopupContentElement
+        'fillOpacity': L.StyleEditor.formElements.OpacityElement
       }
     },
 
