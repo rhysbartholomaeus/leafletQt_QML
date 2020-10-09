@@ -72,6 +72,10 @@
     <link rel="stylesheet" href="qrc:///html/resources/leaflet.mouseCoordinate/dist/leaflet.mousecoordinate.css"/>
     <script type="text/javascript" src="qrc:///html/resources/leaflet.mouseCoordinate/dist/leaflet.mousecoordinate.js"></script>
 
+    <!-- Leaflet draw style editor -->
+    <link rel="stylesheet" href="qrc:///html/resources/Leaflet.StyleEditor/dist/css/Leaflet.StyleEditor.css"/>
+    <script type="text/javascript" src="qrc:///html/resources/Leaflet.StyleEditor/dist/javascript/Leaflet.StyleEditor.js"></script>
+
     </head>
     <body>
         
@@ -175,6 +179,14 @@
 
             // Create the overlay tools - See resources/leaflet.draw/InitialiseLeafletDraw.js
             initialiseLeafletDraw(drawnItems, map);
+
+            //Initialize the StyleEditor
+            var styleEditor = L.control.styleEditor({
+                position: "topleft",
+                useGrouping: false,
+                openOnLeafletDraw: true,
+            });
+            map.addControl(styleEditor);
 
             // Start the OpenSky Networks track query - See resources/leaflet.realtime/QueryOpenSkyNetworks.js
             initiateTrackQuery(trackLayer);
