@@ -61,9 +61,10 @@ Item {
         backgroundColor: '#161d31'
         id: webview
         url: "qrc:/html/index.html"
+
         anchors.fill: parent
-        anchors.leftMargin: 0
-        anchors.topMargin: 0
+        anchors.rightMargin: 5
+
         webChannel: webChannel
         settings.localContentCanAccessRemoteUrls: true
         onLoadingChanged: {
@@ -76,9 +77,6 @@ Item {
 
     function initAircraft(){ //(overlayId){
         createDroneSignal()
-//        if(overlayId !== ""){
-//            webview.runJavaScript("initAircraft(drawnItems ," + overlayId +");");
-//        }
     }
 
     function createGetRequest(url){
