@@ -119,6 +119,7 @@ Limited to creating the drone and setting an individual movement waypoint. The d
 Leaflet was trialled with GeoServer to confirm that the framework can function with standard mapping formats. For the purposes of this demonstration, the system uses a cascading WMS service, reducing the need for the user to download gigabytes of map tile data.
 
 The following steps were taken to establish a WMS service for Leaflet to consume:
+
 1. Download GeoServer from http://geoserver.org/
 2. Ensure that Java bin directory is on the system PATH
     * Run `java --version` from the command line to confirm
@@ -132,21 +133,23 @@ The following steps were taken to establish a WMS service for Leaflet to consume
         ```
         geoserver
         ```
-5. [Follow these instructions for adding a WMS service](https://docs.geoserver.org/stable/en/user/data/cascaded/wms.html)
-    * Cascading WMS services use a remote hosted service instead of requiring the user to download gigabytes of data. One such example is the WMS service offered for free from: http://ows.mundialis.de
-6. Below is a quick overview for setting up a cascading WMS service:
+5. Navigate to the Workspaces folder using the left-hand navigation pane.
+6. Click the select all checkbox, then click the 'Remove selected workspace(s)' button and click OK.
+5. Cascading WMS services use a remote hosted service instead of requiring the user to download gigabytes of data. This example uses the WMS source from: http://ows.mundialis.de
+6. The following outlines how to create a cascading WMS source:
     * In GeoServer, select the Workspaces -> Add new workspace
-    * Set the name and a URI (The URI will be used in the URL for the WMS service).
+    * Set the name and a URI (The URI will be used in the URL for the WMS service). In this example, use the string `map_server` for both the name and URI fields.
     * In the Edit Workspace page, tick the Enabled checkbox.
     * Click Stores -> Add new store. In the 'New data source' page, select the WMS option under 'Other Data Sources'
-    * Select the appropriate workspace and provide a WMS Source Name
-    * In the capabilities URL, paste in the URL from your WMS service, ie: `http://ows.mundialis.de/services/service?` for the Mundialis topographic WMS service. 
+    * Select the appropriate workspace and provide a WMS Source Name, in this instance use `Mundialis`
+    * In the capabilities URL, paste in the URL from your WMS service, use: `http://ows.mundialis.de/services/service?` for the Mundialis WMS service.
     * Click Save.
-    * The next page displays the available WMS services offered from the capabilities URL. Select the desired service and click 'Publish'
+    * The next page displays the available WMS services offered from the capabilities URL. Select the `TOPO-OSM-WMS` service and click 'Publish'
     * On the next page, scroll to the bottom and click 'Save' (By default the data will be enabled for use.)
     * Test the service by clicking Layer Preview -> OpenLayers (Under 'Common Formats')
-6. In your HTML page or similar, use the following Javascript snippet to create a map using the MS service:
-    ```
+7. In your HTML page or similar, use the following Javascript snippet to create a map using the MS service:
+
+    ```javascript
     var mymap = L.map('mapid').setView([0, 0], 5);
 
     var wmsLayer = L.tileLayer.wms('http://localhost:8080/geoserver/map_server/wms?', {
@@ -157,28 +160,34 @@ The following steps were taken to establish a WMS service for Leaflet to consume
             "wmsLayer": wmsLayer.addTo(map),
         }).addTo(map);
     ```
-    This creates a tilelayer pointed to your local instance of the WMS service. **Note**: This assumes that you have imported the necessary Javascript / CSS files. For more details, refer to [Leaflet getting started guide.](https://leafletjs.com/examples/quick-start/)
 
-### Ok that's cool, what if you want to use something like GeoTIFF?
+    This creates a tilelayer pointed to your local instance of the WMS service. **Note**: This assumes that you have imported the necessary Javascript / CSS files for Leaflet. For more details, refer to [Leaflet getting started guide.](https://leafletjs.com/examples/quick-start/)
 
-1. Obtain a GeoTIF source, for example: https://earthobservatory.nasa.gov/features/NightLights/page3.php
-2. Create a directory in the GeoServer data_dir directory, IE: `geoserver/data_dir/data/YOURDATA` and place the file(s) in there.
+More information on cascading WMS services can be found [here](https://docs.geoserver.org/stable/en/user/data/cascaded/wms.html).
+
+### Using a GeoTIFF source output as WMS
+
+1. Obtain a GeoTIF source, the following was used: https://earthobservatory.nasa.gov/features/NightLights/page3.php
+2. Create a directory in the GeoServer data_dir directory, IE: `geoserver/data_dir/data/YOURDATA` and place the *.tiff* file(s) in there.
 3. Start and open GeoServer.
 4. Click Stores -> Add new Store
-5. Provide a Data Source Name and link the file under the Connection Parameters.
-6. On the New Layer page, click Publish
-7. Check the coordinate reference system is consitent with the captured imagery (IE: EPSG 4326)
-8. Open the Publishing tab. Verify under Root Layer Capabilities that WMS Global Settings are selected.
-9. Click Save
-10. Update your map to include the WMS layer using your GeoTIFF raster image, IE:
+5. Use the following Data Source Name: `BlackMarble_2016_D2_geo`
+6. Browse for the newly copied .tiff file under the Connection Parameters.
+7. On the New Layer page, click Publish
+8. Check the coordinate reference system is consitent with the captured imagery (IE: EPSG 4326)
+9. Open the Publishing tab. Verify under Root Layer Capabilities that WMS Global Settings are selected.
+10. Click Save
+11. Update your map to include the WMS layer using your GeoTIFF raster image, IE:
 
-```
+```javascript
     var darkmarble = L.tileLayer.wms('http://localhost:8080/geoserver/map_server/wms?', {
         layers: 'BlackMarble_2016_D2_geo'
     });
 ```
+
 Don't forget to add a control as well:
-```
+
+```javascript
 
     // Only add a single layer to the map, otherwise all will draw simultaneously.
     var tileLayers = {
@@ -222,10 +231,12 @@ WebChannel {
     registeredObjects: [pageChannel]
 }
 ```
+
 This creates a QtObject that can be accessed via Javascript running on the HTML page. 
 
 On the HTML page, create the script following:
-```
+
+```html
 <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
 
 <script>
@@ -263,9 +274,9 @@ All calls are done a synchronously through the WebChannel module.
 
 Similar to QML, connection through C++ is as simple as:
 
-1. Create an object to use as the medium:
-    * jsobj.h:
-```
+##### jsobj.h
+
+```c++
 #ifndef JSOBJ_H
 #define JSOBJ_H
 
@@ -290,8 +301,10 @@ signals:
 #endif // JSOBJ_H
 
 ```
-    * jsobj.cpp:
-```
+
+##### jsobj.cpp
+
+```c++
 
 #include "include/jsobj.h"
 
@@ -310,8 +323,10 @@ void jsobj::shapeAdded(const QString &str){
 }
 
 ```
+
 Then in your primary Qt application class:
-```
+
+```c++
 // Warning - Demonstration - Not all code present.
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -336,8 +351,10 @@ MainWindow::MainWindow(QWidget *parent)
 }
 // Warning - Demonstration - Not all code present.
 ```
+
 To run Javascript from the WebEngine, use the WebEngineView object (`m_view` in this instance):
-```
+
+```c++
 // Warning - Demonstration - Not all code present.
 void MainWindow::handleStartTrackQuery(){
     qDebug() << "Commencing track query.";
@@ -345,19 +362,22 @@ void MainWindow::handleStartTrackQuery(){
 }
 // Warning - Demonstration - Not all code present.
 ```
+
 Invoking C++ from Javascript is identical to that in QML:
-```
+
+```javascript
 new QWebChannel(qt.webChannelTransport,
 function(channel){
     var webobj = channel.objects.JsInterface;
     webobj.shapeAdded('Message');
-    
 });
+
 ```
 
 ## Leaflet modules in use
 
 To faclitate several different functions, the following Leaflet addon modules were used:
+
 * Leaflet Draw
 * Leaflet Realtime
 * Leaflet Moving Marker
@@ -365,33 +385,34 @@ To faclitate several different functions, the following Leaflet addon modules we
 
 ### Leaflet Draw
 
-Leaflet Draw provides the ability to add overlays to the map, using a separate feature layer that is superimposed over the map. 
+Leaflet Draw provides the ability to add overlays to the map, using a separate feature layer that is superimposed over the map.
 
-Each overlay (Polygon, line, square, circle, marker) has a unique leaflet ID associated with it (In the form of a varying digit number. Complicated shapes typically have larger ID values than simple markers or lines). It would be trivial to store the overlay IDs inside a map, with the ID acting as a key and other attributes present inside. This would allow for overlay names and other metadata to be assigned to the shape with relative ease. Retreiving the overlay ID is conducted through the JS WebChannel, allowing bi-drectional communication between the QML (Or C++) application. In this instace, the IDs are stored in a singleton QML ListModel. 
+Each overlay (Polygon, line, square, circle, marker) has a unique leaflet ID associated with it (In the form of a varying digit number. Complicated shapes typically have larger ID values than simple markers or lines). It would be trivial to store the overlay IDs inside a map, with the ID acting as a key and other attributes present inside. This would allow for overlay names and other metadata to be assigned to the shape with relative ease. Retreiving the overlay ID is conducted through the JS WebChannel, allowing bi-drectional communication between the QML (Or C++) application. In this instace, the IDs are stored in a singleton QML ListModel.
 
-Overlays are not persistent nor are they shared, so this mechanism would need to be introduced in the future if this functionality were desired. 
+Overlays are not persistent nor are they shared, so this mechanism would need to be introduced in the future if this functionality were desired.
 
 ### Leaflet Realtime
 
 Leaflet Realtime provides a means of drawing GeoJSON data on the map at a set, fixed rate. The data retrieval is not 'realtime', in that it relies on asynchronous fetch (GET requests) to obtain the data. 
-A consequence of this is that the Realtime addon is reliant on GeoJSON data, requiring items to be converted first before being displayed. This was the case with the OpenSky Network Python server, which provides GeoJSON datatypes for ADS-B traffic. 
+A consequence of this is that the Realtime addon is reliant on GeoJSON data, requiring items to be converted first before being displayed. This was the case with the OpenSky Network Python server, which provides GeoJSON datatypes for ADS-B traffic.
 
 Leaflet realtime typically takes in a URL for requests, however the Realtime addon can also use a function in place of a URL, IE:
 
-```
+```javascript
 L.realtime({
         function(success, error){
             var flightData = httpGet('https://opensky-network.org/api/states/all').then(function(result){return result});
             success(flightData);
     }
 ```
+
 In this example, `httpGet` was a test function which queried the URL, performed the necessary JSON to GeoJSON conversion of the data and returned the response. The realtime `success` function then takes in the data and projects this onto the map for each of the feature objects present in the GeoJSON feature set. 
 
 The function is expected to return straight away, so if performing a fetch, it is necessary to write your own asynchronous logic to handle the delayed promise return. As such, it was just as simple to use a Python server to handle this. 
 
 ### Leaflet Moving Marker
- 
-Ever wanted to move a maker around the screen? This addon lets you do it. This allows you to send multiple points to an existing marker and make it follow each point. For the purposes of demonstration, the points are pulled from a route created using the Leaflet Draw addon. 
+
+Ever wanted to move a maker around the screen? This addon lets you do it. This allows you to send multiple points to an existing marker and make it follow each point. For the purposes of demonstration, the points are pulled from a route created using the Leaflet Draw addon.
 
 Unfortuantely, this addon creates a moving marker using a timer for the entire journey or for each leg of the trip. This means that markers that are spawned to follow a route are moving based on time allocated for the journey/leg, rather than a speed. Additionally, markers will snap to the first point, rather than transition to them. 
 
@@ -419,7 +440,7 @@ Tool-tip bindings can be added to showcase specific details for a track. Note th
 
 Binding the tooltip to the track data:
 
-```
+```javascript
     pointToLayer: function(feature, latlng) {
         // style the aeroplane loction markers with L.DivIcons
         var marker = L.trackSymbol(latlng, {
