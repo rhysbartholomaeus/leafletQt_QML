@@ -14,8 +14,10 @@ I've also got a C++ implementation here: https://github.com/rhysbartholomaeus/le
 * Built on Qt 5.12.9 MSVC 2017 64 Bit
 
 If you want to have more than one layer style available:
-* Java 8 or 11 JRE - Optional
+* Java 8 or 11 JRE 
 * [GeoServer](http://geoserver.org/) (Tested with version 2.17.2)
+
+Follow the instructions in the **GeoServer Setup** and **GeoServer GeoTIFF Source** sections to setup GeoServer for use with this example.
 
 If you want to display ADS-B traffic on the map:
 
@@ -118,8 +120,7 @@ Limited to creating the drone and setting an individual movement waypoint. The d
 2. In the QML app, select 'Start SITL' and click anywhere on the map. This will spawn the drone on the ardupilot side, but GPS won't be active yet since it needs to calibrate. This takes between 10-20 seconds. 
 3. Click 'Setup SITL Drone' in the QML app. This kicks off the periodic GeoJSON query for the drone. A track marker will appear where you clicked previously to spawn the drone.
 4. Wait for the drone to take off. This is automatic. The drone will reach a 100m altitude and begin to orbit the spawn location.
-5. Click 'Move SITL Drone' and select a location on the map. The drone will begin to move towards the semi-transparent waypoint marker. Once it reaches the target, it'll default back to Return To Launch mode and return home. 
-
+5. Click 'Move SITL Drone' and select a location on the map. The drone will begin to move towards the semi-transparent waypoint marker. Once it reaches the target, it'll default back to Return To Launch mode and return home.
 
 ## GeoServer Setup
 
@@ -172,7 +173,7 @@ The following steps were taken to establish a WMS service for Leaflet to consume
 
 More information on cascading WMS services can be found [here](https://docs.geoserver.org/stable/en/user/data/cascaded/wms.html).
 
-### Using a GeoTIFF source output as WMS
+### GeoServer GeoTIFF Source
 
 1. Obtain a GeoTIF source, the following was used: https://earthobservatory.nasa.gov/features/NightLights/page3.php
 2. Create a directory in the GeoServer data_dir directory, IE: `geoserver/data_dir/data/YOURDATA` and place the *.tiff* file(s) in there.
