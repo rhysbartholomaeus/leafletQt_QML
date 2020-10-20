@@ -15,11 +15,17 @@ I've also got a C++ implementation here: https://github.com/rhysbartholomaeus/le
 
 If you want to have more than one layer style available:
 * Java 8 or 11 JRE - Optional
-* [GeoServer](http://geoserver.org/) (Tested with version 2.17.2) 
+* [GeoServer](http://geoserver.org/) (Tested with version 2.17.2)
 
 If you want to display ADS-B traffic on the map:
+
 * Python (Tested on 3.8.5)
-* Python Flask & Flask CORS
+
+  * Python Flask
+  * Flask CORS
+  * Requests
+
+Python requirements listed in _requirements.txt_ file. To install the requirements, run: `pip install -r .\requirements.txt` inside the main directory. 
 
 ## Build 
 
@@ -42,6 +48,7 @@ To delete a shape, select the trashcan icon and select the desired shape(s) for 
 A Javascript drone has been built in that can be directed around the map. Note that this is not an accurate depiction of a drone by any means, it is merely a leaflet marker that can be moved around the map. 
 
 To use:
+
 1. Click on the 'Create Aircraft' button.
 2. Select any point on the map and the drone icon will appear. 
 3. Click 'Move Drone' and select a location on the map. A red waypoint symbol will appear and the drone will slowly make its way there. 
